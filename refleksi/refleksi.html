@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Refleksi | Syira</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script>
@@ -13,9 +15,9 @@
                 extend: {
                     colors: {
                         navy: {
-                            900: '#050b14', // Very dark navy/black
-                            800: '#0a1426', // Deep navy
-                            700: '#112240', // Lighter navy for borders
+                            900: '#050b14',
+                            800: '#0a1426',
+                            700: '#112240',
                         },
                         neon: {
                             blue: '#4facfe',
@@ -65,13 +67,11 @@
             100% { transform: translate(10%, 10%) scale(1.2); }
         }
 
-        /* Neon Focus Glow */
         .input-glow:focus {
             box-shadow: 0 0 15px rgba(79, 172, 254, 0.4), inset 0 0 10px rgba(79, 172, 254, 0.1);
             border-color: #4facfe;
         }
 
-        /* Slide & Fade In Animation untuk Entry Baru */
         .entry-animate {
             animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             opacity: 0;
@@ -79,13 +79,9 @@
         }
 
         @keyframes slideFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Glassmorphism Panel */
         .glass-panel {
             background: rgba(10, 20, 38, 0.6);
             backdrop-filter: blur(12px);
@@ -101,11 +97,13 @@
     <div class="ambient-light" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
 
     <div class="max-w-4xl mx-auto p-6 md:p-12 relative z-10">
+        <!-- Header -->
         <header class="mb-12 text-center">
             <h1 class="text-4xl md:text-5xl font-serif text-white mb-3 tracking-wide">RUANG REFLEKSI</h1>
             <p class="text-gray-400 text-sm md:text-base font-light tracking-widest uppercase">Growth starts when you are honest with yourself</p>
         </header>
 
+        <!-- Form Section -->
         <main class="glass-panel p-8 rounded-2xl shadow-2xl mb-16 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-30"></div>
             
@@ -141,7 +139,7 @@
                 </div>
 
                 <div class="text-center pt-2">
-                    <button type="submit" 
+                    <button type="submit" id="submitBtn"
                         class="group relative inline-flex items-center justify-center px-8 py-3 text-sm font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)] hover:shadow-[0_0_30px_rgba(79,172,254,0.6)]">
                         <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
                         <span class="relative">Simpan Jurnal Hari Ini</span>
@@ -150,6 +148,7 @@
             </form>
         </main>
 
+        <!-- History Section -->
         <section>
             <h2 class="text-center text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8 relative">
                 <span class="bg-navy-900 px-4 relative z-10">Jejak Langkah (History)</span>
@@ -157,98 +156,113 @@
             </h2>
             
             <div id="journalEntries" class="space-y-6">
-                </div>
+                <p class="text-center text-gray-600 italic text-sm mt-10">Memuat data dari cloud...</p>
+            </div>
         </section>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('reflectionForm');
-            const entriesContainer = document.getElementById('journalEntries');
+    <!-- Firebase Realtime Logic -->
+    <script type="module">
+        // 1. Import Firebase SDK versi terbaru (v10) via CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            // Load data dari LocalStorage
-            let journals = JSON.parse(localStorage.getItem('syiraJournalsAesthetic')) || [];
+        // 2. Config Firebase dari screenshot kamu (SANGAT RAHASIA)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZAm_e2wp3RiIOoZAIKYzkjj4_tG6otzE",
+            authDomain: "ruang-refleksi-33035.firebaseapp.com",
+            projectId: "ruang-refleksi-33035",
+            storageBucket: "ruang-refleksi-33035.firebasestorage.app",
+            messagingSenderId: "156379297699",
+            appId: "1:156379297699:web:6d8a206a31e678a5b00c16",
+            measurementId: "G-00H3B5NXL4"
+        };
 
-            // Fungsi render satu entry
-            const createEntryHTML = (entry, animate = false) => {
-                const card = document.createElement('div');
-                card.className = `glass-panel p-6 md:p-8 rounded-2xl border-l-4 border-l-neon-blue hover:border-l-neon-cyan transition-colors duration-300 ${animate ? 'entry-animate' : ''}`;
-                
-                card.innerHTML = `
-                    <div class="text-xs text-gray-500 mb-5 font-mono tracking-wider">${entry.date}</div>
-                    <div class="space-y-5">
-                        <div>
-                            <h3 class="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Perasaanku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-red-400 text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Kesalahanku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-neon-cyan text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Pelajaranku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
-                        </div>
+        // 3. Inisialisasi Firebase & Database
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Buat referensi ke koleksi (tabel) bernama "jurnal_refleksi"
+        const journalsRef = collection(db, "jurnal_refleksi");
+
+        const form = document.getElementById('reflectionForm');
+        const entriesContainer = document.getElementById('journalEntries');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Fungsi render elemen HTML
+        const createEntryHTML = (entry, animate = false) => {
+            const card = document.createElement('div');
+            card.className = `glass-panel p-6 md:p-8 rounded-2xl border-l-4 border-l-neon-blue hover:border-l-neon-cyan transition-colors duration-300 ${animate ? 'entry-animate' : ''}`;
+            
+            card.innerHTML = `
+                <div class="text-xs text-gray-500 mb-5 font-mono tracking-wider">${entry.date}</div>
+                <div class="space-y-5">
+                    <div>
+                        <h3 class="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Perasaanku</h3>
+                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
                     </div>
-                `;
-                return card;
-            };
+                    <div>
+                        <h3 class="text-red-400 text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Kesalahanku</h3>
+                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-neon-cyan text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Pelajaranku</h3>
+                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
+                    </div>
+                </div>
+            `;
+            return card;
+        };
 
-            // Render semua saat awal load
-            const renderJournals = () => {
-                entriesContainer.innerHTML = '';
-                if(journals.length === 0) {
-                    entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-sm mt-10">Belum ada catatan. Ruang ini menunggumu.</p>';
-                    return;
-                }
-                
-                // Urutkan dari yang terbaru (reverse)
-                const reversedJournals = [...journals].reverse();
-                reversedJournals.forEach(entry => {
-                    entriesContainer.appendChild(createEntryHTML(entry));
-                });
-            };
+        // 4. Logic Menampilkan Data (REAL-TIME LISTENER)
+        const q = query(journalsRef, orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            entriesContainer.innerHTML = ''; // Bersihin loading screen
+            
+            if(snapshot.empty) {
+                entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-sm mt-10">Belum ada catatan di database. Ruang ini menunggumu.</p>';
+                return;
+            }
 
-            // Handle Submit Form
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                // Ambil value
-                const feelingsVal = document.getElementById('feelings').value;
-                const mistakesVal = document.getElementById('mistakes').value;
-                const lessonsVal = document.getElementById('lessons').value;
-
-                // Buat object
-                const newEntry = {
-                    id: Date.now(),
-                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
-                    feelings: feelingsVal,
-                    mistakes: mistakesVal,
-                    lessons: lessonsVal
-                };
-
-                // Simpan ke DB lokal
-                journals.push(newEntry);
-                localStorage.setItem('syiraJournalsAesthetic', JSON.stringify(journals));
-
-                // Hapus placeholder teks kosong kalau itu input pertama
-                if (journals.length === 1) {
-                    entriesContainer.innerHTML = '';
-                }
-
-                // Tambahkan elemen baru ke paling atas dengan animasi
-                const newCard = createEntryHTML(newEntry, true);
-                entriesContainer.insertBefore(newCard, entriesContainer.firstChild);
-
-                // Clear form
-                form.reset();
-                
-                // Fokus kembali ke field pertama biar smooth flow-nya
-                document.getElementById('feelings').focus();
+            snapshot.forEach((doc) => {
+                const entry = doc.data();
+                // Animasi cuma dimainin buat data yang bener-bener baru ditambahin
+                const isNew = (Date.now() - entry.timestamp) < 2000; 
+                entriesContainer.appendChild(createEntryHTML(entry, isNew));
             });
+        }, (error) => {
+            console.error("Error fetching data:", error);
+            entriesContainer.innerHTML = '<p class="text-center text-red-500 italic text-sm mt-10">Gagal terhubung ke database. Cek rules Firebase kamu.</p>';
+        });
 
-            // Initial render
-            renderJournals();
+        // 5. Logic Menyimpan Data ke Firebase
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Bikin tombol submit loading bentar biar UX-nya smooth
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="relative">Menyimpan...</span>';
+
+            try {
+                await addDoc(journalsRef, {
+                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
+                    feelings: document.getElementById('feelings').value,
+                    mistakes: document.getElementById('mistakes').value,
+                    lessons: document.getElementById('lessons').value,
+                    timestamp: Date.now()
+                });
+                
+                // Form reset otomatis karena UI bakal ke-update sendirinya dari onSnapshot
+                form.reset();
+                document.getElementById('feelings').focus();
+            } catch (error) {
+                console.error("Error nambah dokumen: ", error);
+                alert("Gagal nyimpen data. Coba cek console browser-nya.");
+            } finally {
+                // Balikin bentuk tombol
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span><span class="relative">Simpan Jurnal Hari Ini</span>';
+            }
         });
     </script>
 </body>
