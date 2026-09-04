@@ -3,95 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Refleksi | Syira</title>
+    <title>Ruang Refleksi | Syira & Partner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: {
-                            900: '#050b14', // Very dark navy/black
-                            800: '#0a1426', // Deep navy
-                            700: '#112240', // Lighter navy for borders
-                        },
-                        neon: {
-                            blue: '#4facfe',
-                            cyan: '#00f2fe'
-                        }
+                        navy: { 900: '#050b14', 800: '#0a1426', 700: '#112240' },
+                        neon: { blue: '#4facfe', cyan: '#00f2fe' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
                 }
             }
         }
     </script>
-
     <style>
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050b14; }
         ::-webkit-scrollbar-thumb { background: #112240; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4facfe; }
-
-        /* Background Animation */
         .bg-glow {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
+            position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh;
             transform: translate(-50%, -50%);
             background: radial-gradient(circle at 50% 50%, rgba(17, 34, 64, 0.5), rgba(5, 11, 20, 1) 70%);
             z-index: -2;
         }
-
         .ambient-light {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
             background: radial-gradient(circle, rgba(79, 172, 254, 0.05), transparent 70%);
-            z-index: -1;
-            animation: float 15s infinite ease-in-out alternate;
+            z-index: -1; animation: float 15s infinite ease-in-out alternate;
         }
-
-        @keyframes float {
-            0% { transform: translate(-10%, -10%) scale(1); }
-            100% { transform: translate(10%, 10%) scale(1.2); }
-        }
-
-        /* Neon Focus Glow */
-        .input-glow:focus {
-            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4), inset 0 0 10px rgba(79, 172, 254, 0.1);
-            border-color: #4facfe;
-        }
-
-        /* Slide & Fade In Animation untuk Entry Baru */
-        .entry-animate {
-            animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        @keyframes slideFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Glassmorphism Panel */
-        .glass-panel {
-            background: rgba(10, 20, 38, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        @keyframes float { 0% { transform: translate(-10%, -10%) scale(1); } 100% { transform: translate(10%, 10%) scale(1.2); } }
+        .input-glow:focus { box-shadow: 0 0 15px rgba(79, 172, 254, 0.4); border-color: #4facfe; }
+        .glass-panel { background: rgba(10, 20, 38, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-navy-900 text-gray-300 font-sans antialiased min-h-screen relative overflow-x-hidden">
@@ -100,155 +50,274 @@
     <div class="ambient-light" style="top: -10%; left: -10%;"></div>
     <div class="ambient-light" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
 
-    <div class="max-w-4xl mx-auto p-6 md:p-12 relative z-10">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl md:text-5xl font-serif text-white mb-3 tracking-wide">RUANG REFLEKSI</h1>
-            <p class="text-gray-400 text-sm md:text-base font-light tracking-widest uppercase">Growth starts when you are honest with yourself</p>
+    <div class="max-w-4xl mx-auto p-4 md:p-10 relative z-10">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-serif text-white mb-2 tracking-wide">RUANG REFLEKSI & HEALING</h1>
+            <p class="text-gray-400 text-xs md:text-sm font-light tracking-widest uppercase">Safe Space Interaktif Bersama Syira</p>
+            
+            <nav class="flex flex-wrap justify-center gap-2 mt-6">
+                <button onclick="switchTab('journal')" id="btn-journal" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-neon-blue text-navy-900 transition-all shadow-md">Jurnal Harian</button>
+                <button onclick="switchTab('mood')" id="btn-mood" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all">Mood Galaxy</button>
+                <button onclick="switchTab('hug')" id="btn-hug" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all">Virtual Hug</button>
+                <button onclick="switchTab('vent')" id="btn-vent" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all">Vent Box</button>
+                <button onclick="switchTab('challenge')" id="btn-challenge" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all">Healing Goals</button>
+            </nav>
         </header>
 
-        <main class="glass-panel p-8 rounded-2xl shadow-2xl mb-16 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-30"></div>
-            
-            <form id="reflectionForm" class="space-y-8">
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-blue mb-3 uppercase tracking-wider" for="feelings">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                        Perasaanku
-                    </label>
-                    <textarea id="feelings" rows="2" required
-                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
-                        placeholder="Apa yang mendominasi pikiranmu hari ini?"></textarea>
-                </div>
+        <div id="tab-journal" class="tab-content active">
+            <main class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12">
+                <form id="reflectionForm" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-neon-blue mb-2 uppercase tracking-wider">Perasaanku Hari Ini</label>
+                        <textarea id="feelings" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-3 text-gray-200 focus:outline-none text-sm resize-none" placeholder="Apa yang mendominasi pikiranmu?"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-red-400 mb-2 uppercase tracking-wider">Kesalahanku / Evaluasi</label>
+                        <textarea id="mistakes" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-3 text-gray-200 focus:outline-none text-sm resize-none" placeholder="Apa yang luput dari kendalimu?"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neon-cyan mb-2 uppercase tracking-wider">Pelajaranku</label>
+                        <textarea id="lessons" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-3 text-gray-200 focus:outline-none text-sm resize-none" placeholder="Resolusi konkret untuk esok hari..."></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" id="submitBtn" class="px-6 py-2.5 text-xs font-bold text-white uppercase tracking-widest bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 shadow-lg">Simpan Jurnal</button>
+                    </div>
+                </form>
+            </main>
 
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-red-400 mb-3 uppercase tracking-wider" for="mistakes">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        Kesalahanku
-                    </label>
-                    <textarea id="mistakes" rows="2" required
-                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
-                        placeholder="Evaluasi secara objektif apa yang luput dari kendalimu..."></textarea>
+            <section>
+                <h2 class="text-center text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mb-6">Jejak Langkah (History)</h2>
+                <div id="journalEntries" class="space-y-4">
+                    <p class="text-center text-gray-600 italic text-xs">Memuat data dari cloud...</p>
                 </div>
+            </section>
+        </div>
 
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-cyan mb-3 uppercase tracking-wider" for="lessons">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                        Pelajaranku
-                    </label>
-                    <textarea id="lessons" rows="2" required
-                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
-                        placeholder="Apa resolusi konkrit untuk esok hari?"></textarea>
+        <div id="tab-mood" class="tab-content">
+            <div class="glass-panel p-8 rounded-2xl text-center space-y-6">
+                <h2 class="text-xl font-serif text-white">Pilih Suasana Hati (Mood) Kamu Hari Ini</h2>
+                <p class="text-gray-400 text-xs">Bagikan kondisimu agar pasangan tahu apa yang sedang kamu rasakan.</p>
+                <div class="flex justify-center gap-4 flex-wrap pt-4">
+                    <button onclick="setMood('Bahagia ☀️', 'from-amber-400 to-orange-500')" class="glass-panel px-5 py-3 rounded-xl hover:border-amber-400 transition-all text-sm">☀️ Bahagia</button>
+                    <button onclick="setMood('Lelah 🌧️', 'from-blue-400 to-indigo-600')" class="glass-panel px-5 py-3 rounded-xl hover:border-blue-400 transition-all text-sm">🌧️ Lelah</button>
+                    <button onclick="setMood('Rindu 🌙', 'from-purple-400 to-pink-500')" class="glass-panel px-5 py-3 rounded-xl hover:border-purple-400 transition-all text-sm">🌙 Rindu</button>
+                    <button onclick="setMood('Stres ⚡', 'from-red-400 to-rose-600')" class="glass-panel px-5 py-3 rounded-xl hover:border-red-400 transition-all text-sm">⚡ Stres</button>
                 </div>
+                <div id="moodStatusDisplay" class="mt-8 p-4 rounded-xl bg-navy-800/80 border border-navy-700 text-sm text-gray-300">
+                    Status Mood Terakhir: <span id="currentMoodText" class="text-neon-blue font-semibold">Belum dipilih</span>
+                </div>
+            </div>
+        </div>
 
-                <div class="text-center pt-2">
-                    <button type="submit" 
-                        class="group relative inline-flex items-center justify-center px-8 py-3 text-sm font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)] hover:shadow-[0_0_30px_rgba(79,172,254,0.6)]">
-                        <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-                        <span class="relative">Simpan Jurnal Hari Ini</span>
+        <div id="tab-hug" class="tab-content">
+            <div class="glass-panel p-10 rounded-2xl text-center space-y-6">
+                <div class="w-20 h-20 bg-neon-blue/10 border border-neon-blue/30 rounded-full flex items-center justify-center mx-auto text-3xl animate-bounce">
+                    🤗
+                </div>
+                <h2 class="text-xl font-serif text-white">Kirim Pelukan & Energi Hangat</h2>
+                <p class="text-gray-400 text-xs max-w-md mx-auto">Kirimkan sinyal pelukan virtual langsung ke layar pasanganmu saat mereka sedang lelah atau badmood.</p>
+                
+                <div class="pt-4">
+                    <button onclick="sendVirtualHug()" class="px-8 py-3 text-xs font-bold text-white uppercase tracking-widest bg-gradient-to-r from-pink-500 to-rose-500 rounded-full hover:opacity-90 shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                        Kirim Pelukan Hangat ✨
                     </button>
                 </div>
-            </form>
-        </main>
+                <div id="hugNotification" class="text-xs text-neon-cyan font-mono min-h-[20px]"></div>
+            </div>
+        </div>
 
-        <section>
-            <h2 class="text-center text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8 relative">
-                <span class="bg-navy-900 px-4 relative z-10">Jejak Langkah (History)</span>
-                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-navy-700 -z-0"></div>
-            </h2>
-            
-            <div id="journalEntries" class="space-y-6">
+        <div id="tab-vent" class="tab-content">
+            <div class="glass-panel p-8 rounded-2xl space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-serif text-white">Kotak Curhat Rahasia (Vent Box)</h2>
+                    <p class="text-gray-400 text-xs mt-1">Uneg-uneg berat yang disimpan secara privat dan hanya bisa dibuka bersama.</p>
                 </div>
-        </section>
+                <form id="ventForm" class="space-y-4">
+                    <input type="text" id="ventTitle" placeholder="Judul / Topik Uneg-uneg" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-3 text-gray-200 text-sm focus:outline-none">
+                    <textarea id="ventContent" rows="3" placeholder="Tuliskan keluh kesahmu di sini..." required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-3 text-gray-200 text-sm focus:outline-none resize-none"></textarea>
+                    <button type="submit" class="w-full py-2.5 text-xs font-bold text-white uppercase tracking-widest bg-navy-700 hover:bg-navy-600 rounded-xl transition-all">Kunci Curhatan ke Kotak</button>
+                </form>
+                <div id="ventList" class="space-y-3 pt-4 border-t border-navy-700">
+                    </div>
+            </div>
+        </div>
+
+        <div id="tab-challenge" class="tab-content">
+            <div class="glass-panel p-8 rounded-2xl space-y-6">
+                <div class="text-center">
+                    <h2 class="text-xl font-serif text-white">Shared Healing Challenges</h2>
+                    <p class="text-gray-400 text-xs mt-1">Saling mendukung lewat misi positif harian.</p>
+                </div>
+                <div class="space-y-3" id="challengeList">
+                    <label class="flex items-center gap-3 p-3 rounded-xl bg-navy-800/50 border border-navy-700 cursor-pointer hover:border-neon-blue transition-all">
+                        <input type="checkbox" class="w-4 h-4 rounded text-neon-blue focus:ring-0 bg-navy-900 border-navy-700">
+                        <span class="text-xs text-gray-200">Minum air putih minimal 2 liter hari ini 💧</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl bg-navy-800/50 border border-navy-700 cursor-pointer hover:border-neon-blue transition-all">
+                        <input type="checkbox" class="w-4 h-4 rounded text-neon-blue focus:ring-0 bg-navy-900 border-navy-700">
+                        <span class="text-xs text-gray-200">Ceritakan 1 hal yang paling disyukuri hari ini 🙏</span>
+                    </label>
+                    <label class="flex items-center gap-3 p-3 rounded-xl bg-navy-800/50 border border-navy-700 cursor-pointer hover:border-neon-blue transition-all">
+                        <input type="checkbox" class="w-4 h-4 rounded text-neon-blue focus:ring-0 bg-navy-900 border-navy-700">
+                        <span class="text-xs text-gray-200">Kirim foto langit/makanan hari ini 📸</span>
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('reflectionForm');
-            const entriesContainer = document.getElementById('journalEntries');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-            // Load data dari LocalStorage
-            let journals = JSON.parse(localStorage.getItem('syiraJournalsAesthetic')) || [];
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZAm_e2wp3RiIOoZAIKYzkjj4_tG6otzE",
+            authDomain: "ruang-refleksi-33035.firebaseapp.com",
+            projectId: "ruang-refleksi-33035",
+            storageBucket: "ruang-refleksi-33035.firebasestorage.app",
+            messagingSenderId: "156379297699",
+            appId: "1:156379297699:web:6d8a206a31e678a5b00c16",
+            measurementId: "G-00H3B5NXL4"
+        };
 
-            // Fungsi render satu entry
-            const createEntryHTML = (entry, animate = false) => {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- SISTEM TAB NAVIGATION ---
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-neon-blue', 'text-navy-900');
+                el.classList.add('glass-panel', 'text-gray-300');
+            });
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.remove('glass-panel', 'text-gray-300');
+            activeBtn.classList.add('bg-neon-blue', 'text-navy-900');
+        };
+
+        // --- TAB 1: JURNAL REFLEKSI LOGIC ---
+        const journalsRef = collection(db, "jurnal_refleksi");
+        const form = document.getElementById('reflectionForm');
+        const entriesContainer = document.getElementById('journalEntries');
+        const submitBtn = document.getElementById('submitBtn');
+
+        onSnapshot(query(journalsRef, orderBy("timestamp", "desc")), (snapshot) => {
+            entriesContainer.innerHTML = '';
+            if(snapshot.empty) {
+                entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-xs">Belum ada catatan di database.</p>';
+                return;
+            }
+            snapshot.forEach((docSnap) => {
+                const entry = docSnap.data();
                 const card = document.createElement('div');
-                card.className = `glass-panel p-6 md:p-8 rounded-2xl border-l-4 border-l-neon-blue hover:border-l-neon-cyan transition-colors duration-300 ${animate ? 'entry-animate' : ''}`;
-                
+                card.className = 'glass-panel p-5 rounded-2xl border-l-4 border-l-neon-blue';
                 card.innerHTML = `
-                    <div class="text-xs text-gray-500 mb-5 font-mono tracking-wider">${entry.date}</div>
-                    <div class="space-y-5">
-                        <div>
-                            <h3 class="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Perasaanku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-red-400 text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Kesalahanku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-neon-cyan text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Pelajaranku</h3>
-                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
-                        </div>
+                    <div class="text-[10px] text-gray-500 mb-3 font-mono">${entry.date}</div>
+                    <div class="space-y-3 text-xs">
+                        <div><strong class="text-neon-blue uppercase tracking-wider block mb-1">Perasaanku:</strong><p class="text-gray-300 font-light">${entry.feelings}</p></div>
+                        <div><strong class="text-red-400 uppercase tracking-wider block mb-1">Kesalahanku:</strong><p class="text-gray-300 font-light">${entry.mistakes}</p></div>
+                        <div><strong class="text-neon-cyan uppercase tracking-wider block mb-1">Pelajaranku:</strong><p class="text-gray-300 font-light">${entry.lessons}</p></div>
                     </div>
                 `;
-                return card;
-            };
-
-            // Render semua saat awal load
-            const renderJournals = () => {
-                entriesContainer.innerHTML = '';
-                if(journals.length === 0) {
-                    entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-sm mt-10">Belum ada catatan. Ruang ini menunggumu.</p>';
-                    return;
-                }
-                
-                // Urutkan dari yang terbaru (reverse)
-                const reversedJournals = [...journals].reverse();
-                reversedJournals.forEach(entry => {
-                    entriesContainer.appendChild(createEntryHTML(entry));
-                });
-            };
-
-            // Handle Submit Form
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-
-                // Ambil value
-                const feelingsVal = document.getElementById('feelings').value;
-                const mistakesVal = document.getElementById('mistakes').value;
-                const lessonsVal = document.getElementById('lessons').value;
-
-                // Buat object
-                const newEntry = {
-                    id: Date.now(),
-                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
-                    feelings: feelingsVal,
-                    mistakes: mistakesVal,
-                    lessons: lessonsVal
-                };
-
-                // Simpan ke DB lokal
-                journals.push(newEntry);
-                localStorage.setItem('syiraJournalsAesthetic', JSON.stringify(journals));
-
-                // Hapus placeholder teks kosong kalau itu input pertama
-                if (journals.length === 1) {
-                    entriesContainer.innerHTML = '';
-                }
-
-                // Tambahkan elemen baru ke paling atas dengan animasi
-                const newCard = createEntryHTML(newEntry, true);
-                entriesContainer.insertBefore(newCard, entriesContainer.firstChild);
-
-                // Clear form
-                form.reset();
-                
-                // Fokus kembali ke field pertama biar smooth flow-nya
-                document.getElementById('feelings').focus();
+                entriesContainer.appendChild(card);
             });
+        });
 
-            // Initial render
-            renderJournals();
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Menyimpan...";
+            try {
+                await addDoc(journalsRef, {
+                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
+                    feelings: document.getElementById('feelings').value,
+                    mistakes: document.getElementById('mistakes').value,
+                    lessons: document.getElementById('lessons').value,
+                    timestamp: Date.now()
+                });
+                form.reset();
+            } catch (err) {
+                alert("Gagal menyimpan jurnal.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Simpan Jurnal";
+            }
+        });
+
+        // --- TAB 2: MOOD GALAXY LOGIC ---
+        const moodRef = collection(db, "mood_realtime");
+        window.setMood = async (moodName, colorClass) => {
+            try {
+                await addDoc(moodRef, { mood: moodName, timestamp: Date.now() });
+                document.getElementById('currentMoodText').innerText = moodName;
+                alert("Mood berhasil diperbarui ke galaksi!");
+            } catch(e) {
+                console.error(e);
+            }
+        };
+
+        // --- TAB 3: VIRTUAL HUG LOGIC ---
+        const hugRef = collection(db, "virtual_hugs");
+        window.sendVirtualHug = async () => {
+            try {
+                await addDoc(hugRef, { timestamp: Date.now() });
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('hugNotification').innerText = "Pelukan hangat berhasil dikirim! ✨";
+            } catch(e) {
+                console.error(e);
+            }
+        };
+
+        // Listen realtime untuk virtual hug masuk dari pasangan
+        onSnapshot(query(hugRef, orderBy("timestamp", "desc")), (snapshot) => {
+            if(!snapshot.empty) {
+                const latestHug = snapshot.docs[0].data();
+                if((Date.now() - latestHug.timestamp) < 3000) {
+                    confetti({ particleCount: 120, spread: 90, origin: { y: 0.5 } });
+                    document.getElementById('hugNotification').innerText = "Pasanganmu baru saja mengirimkan pelukan! 🤗✨";
+                }
+            }
+        });
+
+        // --- TAB 4: VENT BOX LOGIC ---
+        const ventRef = collection(db, "vent_box");
+        const ventForm = document.getElementById('ventForm');
+        const ventList = document.getElementById('ventList');
+
+        ventForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                await addDoc(ventRef, {
+                    title: document.getElementById('ventTitle').value,
+                    content: document.getElementById('ventContent').value,
+                    status: 'Terkunci (Perlu Konfirmasi Berdua)',
+                    timestamp: Date.now()
+                });
+                ventForm.reset();
+            } catch(e) {
+                console.error(e);
+            }
+        });
+
+        onSnapshot(query(ventRef, orderBy("timestamp", "desc")), (snapshot) => {
+            ventList.innerHTML = '';
+            if(snapshot.empty) {
+                ventList.innerHTML = '<p class="text-center text-gray-600 italic text-xs">Belum ada uneg-uneg tersimpan.</p>';
+                return;
+            }
+            snapshot.forEach((docSnap) => {
+                const item = docSnap.data();
+                const div = document.createElement('div');
+                div.className = "p-3 rounded-xl bg-navy-800/80 border border-navy-700 text-xs flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <strong class="text-white block mb-1">🔒 ${item.title}</strong>
+                        <span class="text-gray-400 italic">${item.status}</span>
+                    </div>
+                `;
+                ventList.appendChild(div);
+            });
         });
     </script>
 </body>
