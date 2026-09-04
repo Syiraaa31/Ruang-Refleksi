@@ -3,41 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruang Refleksi | Syira</title>
+    <title>Ruang Refleksi & Teman Tenang</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
+   
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: { 900: '#050b14', 800: '#0a1426', 700: '#112240' },
-                        neon: { blue: '#4facfe', cyan: '#00f2fe' }
+                        navy: {
+                            900: '#050b14',
+                            800: '#0a1426',
+                            700: '#112240',
+                        },
+                        neon: {
+                            blue: '#4facfe',
+                            cyan: '#00f2fe',
+                            purple: '#a18cd1',
+                            gold: '#ffd700'
+                        }
                     },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
                 }
             }
         }
     </script>
+
     <style>
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050b14; }
         ::-webkit-scrollbar-thumb { background: #112240; border-radius: 10px; }
-        
-        /* Fix bug kursor nyangkut dengan pointer-events: none */
+        ::-webkit-scrollbar-thumb:hover { background: #4facfe; }
+
         .bg-glow {
-            position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
             transform: translate(-50%, -50%);
             background: radial-gradient(circle at 50% 50%, rgba(17, 34, 64, 0.5), rgba(5, 11, 20, 1) 70%);
-            z-index: -2; pointer-events: none;
+            z-index: -2;
         }
+
         .ambient-light {
-            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
             background: radial-gradient(circle, rgba(79, 172, 254, 0.05), transparent 70%);
-            z-index: -1; animation: float 15s infinite ease-in-out alternate;
-            pointer-events: none;
+            z-index: -1;
+            animation: float 15s infinite ease-in-out alternate;
         }
 
         @keyframes float {
@@ -46,90 +70,377 @@
         }
 
         .input-glow:focus {
-            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4), inset 0 0 10px rgba(79, 172, 254, 0.1);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.3);
             border-color: #4facfe;
+        }
+
+        .glass-panel {
+            background: rgba(10, 20, 38, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .mood-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mood-btn.active {
+            background: rgba(79, 172, 254, 0.2);
+            border-color: #4facfe;
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
+            transform: translateY(-3px);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 8px #ffd700); }
+        }
+        .star-item {
+            animation: twinkle 3s infinite ease-in-out;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .star-item:hover {
+            transform: scale(1.5) rotate(15deg);
+        }
+
+        @keyframes slideFadeIn {
+            to { opacity: 1; transform: translateY(0); }
         }
         .entry-animate {
             animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0; transform: translateY(20px);
+            opacity: 0;
+            transform: translateY(20px);
         }
-        @keyframes slideFadeIn { to { opacity: 1; transform: translateY(0); } }
-        .glass-panel {
-            background: rgba(10, 20, 38, 0.6); backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05);
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .live-dot {
+            animation: pulse-slow 2s infinite;
         }
     </style>
 </head>
-<body class="bg-navy-900 text-gray-300 font-sans antialiased min-h-screen relative overflow-x-hidden">
+<body class="bg-navy-900 text-gray-300 font-sans antialiased min-h-screen relative overflow-x-hidden pb-24">
 
     <div class="bg-glow"></div>
     <div class="ambient-light" style="top: -10%; left: -10%;"></div>
     <div class="ambient-light" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
 
-    <div class="max-w-4xl mx-auto p-6 md:p-12 relative z-10">
-        <header class="mb-12 text-center">
-            <h1 class="text-4xl md:text-5xl font-serif text-white mb-3 tracking-wide">RUANG REFLEKSI</h1>
-            <p class="text-gray-400 text-sm md:text-base font-light tracking-widest uppercase">Growth starts when you are honest with yourself</p>
+    <div class="max-w-3xl mx-auto p-6 md:p-10 relative z-10">
+        <!-- Header -->
+        <header class="mb-6 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-navy-800/90 border border-navy-700 text-xs text-neon-blue mb-4 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                <span id="connectionStatus">Terhubung ke Database Aman</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-serif text-white mb-2 tracking-wide">RUANG REFLEKSI</h1>
+            <p class="text-gray-400 text-xs md:text-sm font-light tracking-widest uppercase">Tempat aman untuk kamu & teman-temanmu bercerita</p>
         </header>
 
-        <main class="glass-panel p-8 rounded-2xl shadow-2xl mb-16 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-30"></div>
+        <!-- MINI GAME: LANGIT BINTANG KEBERUNTUNGAN -->
+        <div class="glass-panel p-4 rounded-2xl mb-6 border border-neon-gold/30 bg-gradient-to-r from-navy-800/90 via-indigo-950/40 to-navy-800/90 relative overflow-hidden text-center">
+            <div class="absolute top-2 left-3 text-[10px] uppercase tracking-widest text-neon-gold font-mono flex items-center gap-1">
+                <span>✨</span> Mini Game: Langit Validasi Bintang (Klik Bintang di Bawah)
+            </div>
+            <div class="flex justify-center items-center gap-6 sm:gap-10 py-5 pt-6">
+                <div onclick="clickStar(0)" class="star-item text-2xl" style="animation-delay: 0s;" title="Klik bintang ini!">⭐</div>
+                <div onclick="clickStar(1)" class="star-item text-3xl" style="animation-delay: 0.8s;" title="Klik bintang ini!">🌟</div>
+                <div onclick="clickStar(2)" class="star-item text-2xl" style="animation-delay: 1.5s;" title="Klik bintang ini!">✨</div>
+                <div onclick="clickStar(3)" class="star-item text-3xl" style="animation-delay: 0.4s;" title="Klik bintang ini!">💫</div>
+                <div onclick="clickStar(4)" class="star-item text-2xl" style="animation-delay: 1.2s;" title="Klik bintang ini!">⭐</div>
+            </div>
+            <p id="starMessage" class="text-xs text-neon-cyan italic font-light px-2 min-h-[20px]">"Sentuh salah satu bintang di atas untuk melihat pesan rahasia hari ini."</p>
+        </div>
+
+        <!-- Quote Banner & Voice Over Button -->
+        <div class="glass-panel p-4 rounded-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-neon-blue/20 shadow-lg">
+            <p id="quoteText" class="text-xs md:text-sm text-neon-cyan italic tracking-wide font-light text-center sm:text-left transition-opacity duration-500">"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan."</p>
+            <button onclick="speakCurrentQuote()" class="px-3.5 py-2 rounded-xl bg-navy-800 border border-navy-700 text-neon-blue text-xs font-bold hover:bg-navy-700 transition-all flex items-center gap-1.5 shrink-0">
+                <span>🎧</span> Dengarkan Suara
+            </button>
+        </div>
+
+        <!-- Tombol Pelukan Maya & Cemas -->
+        <div class="glass-panel p-5 rounded-2xl mb-8 border border-neon-purple/30 bg-gradient-to-r from-navy-800/80 to-purple-950/20 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
+                    <span>🫂</span> Sedang Merasa Cemas atau Kewalahan?
+                </h3>
+                <p class="text-xs text-gray-400">Klik tombol di samping untuk mendapat validasi instan & panduan menenangkan diri.</p>
+            </div>
+            <button onclick="openAnxietyReliefModal(); playPopSound();" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold uppercase tracking-wider hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shrink-0">
+                Beri Aku Pelukan Maya ✨
+            </button>
+        </div>
+
+        <!-- TAB MENU UTAMA (Jurnal, Kotak Curhat, & Playlist Lagu Penenang) -->
+        <div class="grid grid-cols-3 gap-1 rounded-xl bg-navy-800/80 p-1 mb-6 border border-navy-700">
+            <button onclick="switchTab('journal'); playPopSound();" id="tabJournalBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center">
+                📝 Jurnal Harian
+            </button>
+            <button onclick="switchTab('vent'); playPopSound();" id="tabVentBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center">
+                💌 Kotak Curhat
+            </button>
+            <button onclick="switchTab('music'); playPopSound();" id="tabMusicBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center">
+                🎶 Playlist Bobo
+            </button>
+        </div>
+
+        <!-- Form 1: Jurnal Harian -->
+        <main id="journalSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-40"></div>
             
-            <form id="reflectionForm" class="space-y-8">
-                
-                <!-- MOOD SECTION DI DALAM FORM -->
-                <div class="glass-panel p-6 rounded-xl border border-navy-700 text-center space-y-4">
-                    <h2 class="text-lg font-serif text-white">Pilih Suasana Hati (Mood)</h2>
-                    <p class="text-gray-400 text-xs">Bagikan kondisimu agar pasangan tahu apa yang sedang kamu rasakan.</p>
-                    <div class="flex justify-center gap-3 flex-wrap pt-2">
-                        <button type="button" onclick="setMood('Bahagia ☀️')" class="glass-panel px-4 py-2 rounded-lg hover:border-amber-400 transition-all text-sm">☀️ Bahagia</button>
-                        <button type="button" onclick="setMood('Lelah 🌧️')" class="glass-panel px-4 py-2 rounded-lg hover:border-blue-400 transition-all text-sm">🌧️ Lelah</button>
-                        <button type="button" onclick="setMood('Rindu 🌙')" class="glass-panel px-4 py-2 rounded-lg hover:border-purple-400 transition-all text-sm">🌙 Rindu</button>
-                        <button type="button" onclick="setMood('Stres ⚡')" class="glass-panel px-4 py-2 rounded-lg hover:border-red-400 transition-all text-sm">⚡ Stres</button>
-                    </div>
-                    <div class="mt-4 p-3 rounded-lg bg-navy-800/80 text-sm text-gray-300">
-                        Mood Terpilih: <span id="currentMoodText" class="text-neon-blue font-semibold">Belum dipilih</span>
+            <form id="reflectionForm" class="space-y-6">
+                <!-- Input Nama Pengirim (Bisa diisi siapa saja / temanmu) -->
+                <div>
+                    <label class="block text-xs font-bold text-neon-cyan uppercase tracking-widest mb-2" for="authorName">Nama Pengirim / Pemilik Catatan</label>
+                    <input type="text" id="authorName" required value="Zafira Zahra Kusnadi"
+                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all"
+                        placeholder="Contoh: Zafira, Nama Temenmu, dll">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">1. Bagaimana suasana hatimu saat ini?</label>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5" id="moodContainer">
+                        <button type="button" data-mood="😊 Bahagia" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">😊</span>
+                            <span class="text-[10px]">Bahagia</span>
+                        </button>
+                        <button type="button" data-mood="😌 Tenang" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">😌</span>
+                            <span class="text-[10px]">Tenang</span>
+                        </button>
+                        <button type="button" data-mood="⚡ Semangat" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">⚡</span>
+                            <span class="text-[10px]">Semangat</span>
+                        </button>
+                        <button type="button" data-mood="🌧️ Lelah" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">🌧️</span>
+                            <span class="text-[10px]">Lelah</span>
+                        </button>
+                        <button type="button" data-mood="💭 Cemas" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">💭</span>
+                            <span class="text-[10px]">Cemas</span>
+                        </button>
+                        <button type="button" data-mood="🥀 Sedih" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
+                            <span class="text-2xl">🥀</span>
+                            <span class="text-[10px]">Sedih</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- TEXTAREAS -->
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-blue mb-3 uppercase tracking-wider" for="feelings">Perasaanku Detail</label>
-                    <textarea id="feelings" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none" placeholder="Ceritakan lebih detail perasaanmu..."></textarea>
-                </div>
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-red-400 mb-3 uppercase tracking-wider" for="mistakes">Kesalahanku</label>
-                    <textarea id="mistakes" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none" placeholder="Evaluasi objektif..."></textarea>
-                </div>
-                <div>
-                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-cyan mb-3 uppercase tracking-wider" for="lessons">Pelajaranku</label>
-                    <textarea id="lessons" rows="2" required class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none" placeholder="Resolusi konkrit..."></textarea>
+                <div class="pt-2">
+                    <label class="flex items-center gap-2 text-xs font-bold text-neon-blue mb-2 uppercase tracking-wider" for="feelings">
+                        2. Ceritakan Alasan / Detail Perasaanmu
+                    </label>
+                    <textarea id="feelings" rows="2" required
+                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
+                        placeholder="Hal apa yang paling mendominasi pikiranmu hari ini?"></textarea>
                 </div>
 
-                <div class="text-center pt-6">
-                    <button type="submit" id="submitBtn" class="group relative inline-flex items-center justify-center px-8 py-3 text-sm font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)] hover:shadow-[0_0_30px_rgba(79,172,254,0.6)]">
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-bold text-red-400 mb-2 uppercase tracking-wider" for="mistakes">
+                        3. Evaluasi Kesalahan / Hal yang Luput dari Kendali
+                    </label>
+                    <textarea id="mistakes" rows="2" required
+                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
+                        placeholder="Apa yang bisa diperbaiki atau apa yang tidak perlu dikhawatirkan secara berlebihan?"></textarea>
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 text-xs font-bold text-neon-cyan mb-2 uppercase tracking-wider" for="lessons">
+                        4. Pelajaran Hidup / Resolusi Esok Hari
+                    </label>
+                    <textarea id="lessons" rows="2" required
+                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
+                        placeholder="Satu langkah kecil konkrit yang akan kamu lakukan esok hari..."></textarea>
+                </div>
+
+                <div class="text-center pt-3">
+                    <button type="submit" id="submitBtn"
+                        class="group relative inline-flex items-center justify-center px-8 py-3 text-xs font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)]">
                         <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-                        <span class="relative">Simpan Jurnal Hari Ini 🤗</span>
+                        <span class="relative">Simpan Jurnal Hari Ini ✨</span>
                     </button>
                 </div>
             </form>
         </main>
 
+        <!-- Form 2: Kotak Surat Curhat Interaktif -->
+        <main id="ventSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden hidden">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-purple to-transparent opacity-40"></div>
+            
+            <div class="mb-4">
+                <h2 class="text-base font-bold text-white mb-1">Kotak Surat Curhat 💌</h2>
+                <p class="text-xs text-gray-400">Tuliskan beban pikiran atau ketakutanmu. Bayangkan kamu sedang memasukkannya ke dalam amplop rahasia untuk ditenangkan.</p>
+            </div>
+
+            <form id="ventForm" class="space-y-4">
+                <textarea id="ventInput" rows="4" required
+                    class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-4 text-sm text-gray-200 focus:outline-none transition-all resize-none"
+                    placeholder="Tumpahkan semuanya di sini... Contoh: 'Aku merasa lelah dan cemas dengan target-targetku...'"></textarea>
+                
+                <button type="submit" id="ventSubmitBtn"
+                    class="w-full py-3 text-xs font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-500 hover:to-blue-500 shadow-md flex items-center justify-center gap-2">
+                    <span>✉️</span> Kirim Surat ke Kotak Tenang
+                </button>
+            </form>
+
+            <div id="ventResultBox" class="mt-6 p-5 rounded-xl bg-navy-800/90 border border-purple-500/30 hidden">
+                <h4 class="text-xs font-bold text-neon-cyan uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                    <span>💡</span> Balasan & Tips Tenang Untukmu:
+                </h4>
+                <div id="ventAdviceContent" class="text-xs text-gray-300 leading-relaxed space-y-2 font-light"></div>
+                <button onclick="speakVentAdvice()" class="mt-3 px-3 py-1.5 rounded-lg bg-navy-700 text-neon-blue text-[10px] font-bold uppercase tracking-wider hover:bg-navy-600 transition-colors flex items-center gap-1">
+                    <span>🔊</span> Bacakan Balasan Ini
+                </button>
+            </div>
+        </main>
+
+        <!-- Tab 3: Playlist Lagu Penenang & Tidur Nyenyak -->
+        <main id="musicSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden hidden space-y-6">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-gold to-transparent opacity-40"></div>
+            
+            <div class="text-center md:text-left">
+                <h2 class="text-base font-bold text-white mb-1">🎶 Playlist Penenang & Pengantar Tidur</h2>
+                <p class="text-xs text-gray-400">Daftar lagu pilihan untuk meredakan kecemasan, overthinking, dan membantu tidur lebih nyenyak.</p>
+            </div>
+
+            <!-- Kategori 1 -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-neon-blue uppercase tracking-widest">1. Lo-Fi & Ambient Beats (Fokus & Menenangkan Pikiran)</h3>
+                <div class="grid gap-3">
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Weightless" — Marconi Union</div>
+                            <div class="text-[11px] text-gray-400 font-light">Secara ilmiah menurunkan hormon stres kortisol hingga 65% dan memperlambat detak jantung.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Marconi+Union+Weightless" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Apocalypse" — Cigarettes After Sex</div>
+                            <div class="text-[11px] text-gray-400 font-light">Tempo lambat & vokal lembut untuk menemani pikiran yang sedang riuh.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Cigarettes+After+Sex+Apocalypse" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Snowfall" — Øneheart & Reidku</div>
+                            <div class="text-[11px] text-gray-400 font-light">Ambient instrumental melayang yang dingin namun menenangkan sebelum tidur.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Oneheart+Reidku+Snowfall" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori 2 -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-neon-cyan uppercase tracking-widest">2. Piano & Akustik Minimalis (Damai & Hangat)</h3>
+                <div class="grid gap-3">
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"River Flows in You" — Yiruma</div>
+                            <div class="text-[11px] text-gray-400 font-light">Klasik modern piano yang mengalir lembut, melepas ketegangan di dada.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Yiruma+River+Flows+in+You" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Gymnopédie No. 1" — Erik Satie</div>
+                            <div class="text-[11px] text-gray-400 font-light">Musik klasik minimalis yang memberikan ruang kosong bagi otak untuk berhenti overthinking.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Gymnopedie+No+1+Erik+Satie" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Comptine d'un autre été" — Yann Tiersen</div>
+                            <div class="text-[11px] text-gray-400 font-light">Melodi akordeon/piano manis yang memberikan rasa nostalgia hangat.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Yann+Tiersen+Comptine+d+un+autre+ete" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori 3 -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-neon-purple uppercase tracking-widest">3. Suara Alam & White Noise (Pengantar Tidur Nyenyak)</h3>
+                <div class="grid gap-3">
+                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="text-xs font-bold text-white">"Rain Sounds for Sleep" / "Deep Sleep Forest Ambient"</div>
+                            <div class="text-[11px] text-gray-400 font-light">Suara rintik hujan konstan sebagai white noise alami pemicu gelombang tidur delta.</div>
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=Rain+Sounds+for+Sleep+Ambient" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
+                            ▶️ Putar di YouTube
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bagian Riwayat Jurnal -->
         <section>
-            <h2 class="text-center text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8 relative">
-                <span class="bg-navy-900 px-4 relative z-10">Jejak Langkah (History)</span>
-                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-navy-700 -z-0"></div>
-            </h2>
-            <div id="journalEntries" class="space-y-6">
-                <p class="text-center text-gray-600 italic text-sm mt-10">Memuat data dari cloud...</p>
+            <div class="flex items-center justify-between mb-6 px-1">
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Jejak Refleksi Tersimpan</h2>
+                <span class="text-xs font-mono bg-navy-800 border border-navy-700 px-3 py-1 rounded-full text-neon-blue">Total: <span id="entryCount">0</span> Catatan</span>
+            </div>
+           
+            <div id="journalEntries" class="space-y-4">
+                <p class="text-center text-gray-500 italic text-sm py-8">Memuat data dari cloud...</p>
             </div>
         </section>
     </div>
 
-    <!-- FIREBASE REALTIME LOGIC -->
+    <!-- Modal Popup: Validasi Darurat & Pernapasan -->
+    <div id="anxietyModal" class="fixed inset-0 z-50 bg-navy-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-neon-purple/40 relative shadow-2xl animate-scaleIn">
+            <button onclick="closeAnxietyReliefModal(); playPopSound();" class="absolute top-4 right-4 text-gray-400 hover:text-white text-sm">✕</button>
+            <div class="text-center">
+                <span class="text-4xl mb-3 block">🫂✨</span>
+                <h3 class="text-base font-serif text-white font-bold mb-2">Validasi Untukmu Saat Ini</h3>
+                <p class="text-xs text-neon-cyan italic mb-4 leading-relaxed">"Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup."</p>
+                
+                <div class="bg-navy-800/90 p-4 rounded-xl text-left border border-navy-700 space-y-2 mb-5">
+                    <span class="text-[10px] font-bold text-neon-blue uppercase tracking-wider block">Tips Cepat Meredakan Cemas (Box Breathing):</span>
+                    <ul class="text-xs text-gray-300 space-y-1 font-light list-disc pl-4">
+                        <li>Tarik napas dalam lewat hidung selama <b class="text-white">4 detik</b>.</li>
+                        <li>Tahan napasmu selama <b class="text-white">4 detik</b>.</li>
+                        <li>Hembuskan perlahan lewat mulut selama <b class="text-white">4 detik</b>.</li>
+                        <li>Tahan kosong selama <b class="text-white">4 detik</b>. Ulangi 3 kali.</li>
+                    </ul>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="speakAnxietyText()" class="flex-1 py-2 rounded-xl bg-navy-800 border border-navy-700 text-neon-blue text-xs font-bold uppercase tracking-wider hover:bg-navy-700 transition-colors">
+                        🔊 Dengarkan
+                    </button>
+                    <button onclick="closeAnxietyReliefModal(); triggerConfetti(); playPopSound();" class="flex-1 py-2 rounded-xl bg-neon-blue text-navy-900 font-bold text-xs uppercase tracking-wider hover:bg-neon-cyan transition-colors">
+                        Tenang 💙
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Firebase & Game / Audio Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDZAm_e2wp3RiIOoZAIKYzkjj4_tG6otzE",
@@ -145,37 +456,206 @@
         const db = getFirestore(app);
         const journalsRef = collection(db, "jurnal_refleksi");
 
-        // Logic Mood Button
-        let currentMood = "Netral";
-        window.setMood = function(moodValue) {
-            currentMood = moodValue;
-            document.getElementById('currentMoodText').innerText = currentMood;
+        // Web Audio Effect (Suara Klik Interaktif)
+        window.playPopSound = () => {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(580, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch(e) {}
         };
 
-        const form = document.getElementById('reflectionForm');
-        const entriesContainer = document.getElementById('journalEntries');
-        const submitBtn = document.getElementById('submitBtn');
+        // Mini Game: Klik Bintang Berkelap-kelip
+        const starMessages = [
+            "✨ Bintang 1: 'Ingatlah bahwa setiap badai pasti berlalu, dan kamu selalu memiliki kekuatan untuk melewatinya.'",
+            "🌟 Bintang 2: 'Dirimu hari ini sudah melakukan yang terbaik. Berbanggalah pada proses kecil yang kau lalui.'",
+            "✨ Bintang 3: 'Jangan terlalu keras pada dirimu sendiri. Kamu sedang belajar dan bertumbuh setiap hari.'",
+            "💫 Bintang 4: 'Kejujuranmu pada diri sendiri adalah bukti betapa berjiwa besarnya kamu.'",
+            "⭐ Bintang 5: 'Tarik napas dalam-dalam. Semuanya akan baik-baik saja pada waktunya.'"
+        ];
+        window.clickStar = (index) => {
+            playPopSound();
+            triggerConfetti();
+            const msgEl = document.getElementById('starMessage');
+            msgEl.innerText = starMessages[index];
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(starMessages[index].replace(/^[✨🌟💫⭐]+ Bintang \d+: /, ''));
+                speech.lang = 'id-ID';
+                speech.rate = 0.95;
+                window.speechSynthesis.speak(speech);
+            }
+        };
 
-        const createEntryHTML = (entry, animate = false) => {
-            const card = document.createElement('div');
-            card.className = `glass-panel p-6 md:p-8 rounded-2xl border-l-4 border-l-neon-blue hover:border-l-neon-cyan transition-colors duration-300 ${animate ? 'entry-animate' : ''}`;
+        // Voice Over / Text to Speech Helper
+        window.speakCurrentQuote = () => {
+            const text = document.getElementById('quoteText').innerText;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'id-ID';
+                speech.rate = 0.95;
+                window.speechSynthesis.speak(speech);
+            }
+        };
+        window.speakAnxietyText = () => {
+            const text = "Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup.";
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'id-ID';
+                speech.rate = 0.95;
+                window.speechSynthesis.speak(speech);
+            }
+        };
+        window.speakVentAdvice = () => {
+            const text = document.getElementById('ventAdviceContent').innerText;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'id-ID';
+                speech.rate = 0.95;
+                window.speechSynthesis.speak(speech);
+            }
+        };
+
+        // Tab Switching Logic (Journal, Vent, Music)
+        window.switchTab = (tab) => {
+            const journalSec = document.getElementById('journalSection');
+            const ventSec = document.getElementById('ventSection');
+            const musicSec = document.getElementById('musicSection');
             
+            const journalBtn = document.getElementById('tabJournalBtn');
+            const ventBtn = document.getElementById('tabVentBtn');
+            const musicBtn = document.getElementById('tabMusicBtn');
+
+            journalSec.classList.add('hidden');
+            ventSec.classList.add('hidden');
+            musicSec.classList.add('hidden');
+
+            journalBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
+            ventBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
+            musicBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
+
+            if(tab === 'journal') {
+                journalSec.classList.remove('hidden');
+                journalBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
+            } else if(tab === 'vent') {
+                ventSec.classList.remove('hidden');
+                ventBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
+            } else if(tab === 'music') {
+                musicSec.classList.remove('hidden');
+                musicBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
+            }
+        };
+
+        // Modal Anxiety Relief
+        window.openAnxietyReliefModal = () => {
+            document.getElementById('anxietyModal').classList.remove('hidden');
+        };
+        window.closeAnxietyReliefModal = () => {
+            document.getElementById('anxietyModal').classList.add('hidden');
+        };
+
+        // Logic Kotak Surat Curhat
+        const ventForm = document.getElementById('ventForm');
+        ventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            playPopSound();
+            const adviceBox = document.getElementById('ventResultBox');
+            const adviceContent = document.getElementById('ventAdviceContent');
+
+            let validationText = "<p><b>Validasi:</b> Amplop suratmu sudah diterima dengan aman. Mengakui bahwa kamu sedang merasa berat adalah langkah awal yang sangat berani. Kamu tidak perlu memikul semuanya sendirian.</p>";
+            let tipsText = "<ul class='list-disc pl-4 space-y-1 mt-2'><li><b>Pecah Tugas Menjadi Kecil:</b> Fokuslah hanya pada 1 hal kecil yang bisa diselesaikan dalam 5 menit ke depan.</li><li><b>Tuliskan Pikiranmu:</b> Menuliskannya di sini sudah mengurangi setengah bebannya.</li><li><b>Istirahatlah Sejenak:</b> Minum air dingin dan istirahatkan matamu dari layar. Kamu sudah bekerja keras.</li></ul>";
+
+            adviceContent.innerHTML = validationText + tipsText;
+            adviceBox.classList.remove('hidden');
+            triggerConfetti();
+        });
+
+        // State untuk Mood
+        let selectedMood = "😊 Bahagia";
+        const moodButtons = document.querySelectorAll('.mood-btn');
+        moodButtons.forEach(btn => {
+            if(btn.dataset.mood === selectedMood) btn.classList.add('active');
+            btn.addEventListener('click', () => {
+                playPopSound();
+                moodButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedMood = btn.dataset.mood;
+            });
+        });
+
+        // Rotasi Quotes
+        const quotes = [
+            "\"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan.\"",
+            "\"Kejujuran pada diri sendiri adalah awal dari ketenangan pikiran.\"",
+            "\"Setiap kesalahan adalah data pembelajaran, bukan kegagalan.\"",
+            "\"Kamu tidak harus sempurna untuk terus berkembang.\""
+        ];
+        let currentQuoteIndex = 0;
+        setInterval(() => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            const quoteEl = document.getElementById('quoteText');
+            if(quoteEl) {
+                quoteEl.style.opacity = 0;
+                setTimeout(() => {
+                    quoteEl.innerText = quotes[currentQuoteIndex];
+                    quoteEl.style.opacity = 1;
+                }, 300);
+            }
+        }, 6000);
+
+        // Confetti
+        const triggerConfetti = () => {
+            confetti({
+                particleCount: 90,
+                spread: 70,
+                origin: { y: 0.7 },
+                colors: ['#4facfe', '#00f2fe', '#ffffff', '#ffd700', '#a18cd1']
+            });
+        };
+
+        // Render kartu jurnal dengan nama pengirim yang dinamis (bisa diisi kamu atau temanmu)
+        const createEntryHTML = (entry, id, animate = false) => {
+            const card = document.createElement('div');
+            card.className = `glass-panel p-6 rounded-2xl border-l-4 border-l-neon-blue transition-all duration-300 relative group ${animate ? 'entry-animate' : ''}`;
+           
+            const author = entry.author || "Zafira Zahra Kusnadi";
+
             card.innerHTML = `
-                <div class="flex justify-between items-center mb-5">
-                    <div class="text-xs text-gray-500 font-mono tracking-wider">${entry.date}</div>
-                    <div class="text-xs font-bold px-3 py-1 bg-navy-800 rounded-full border border-navy-700">${entry.mood || 'Netral'}</div>
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-4 border-b border-navy-700/60 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base px-2.5 py-1 rounded-lg bg-navy-800 border border-navy-700 font-medium text-white">${entry.mood || '😊 Bahagia'}</span>
+                        <span class="text-[11px] text-gray-400 font-mono">${entry.date}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[11px] font-medium text-neon-cyan bg-navy-800/80 px-2.5 py-1 rounded-md border border-navy-700">✍️ ${author}</span>
+                        <button onclick="window.deleteJournal('${id}'); playPopSound();" class="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity text-xs uppercase tracking-wider flex items-center gap-1">
+                            Hapus
+                        </button>
+                    </div>
                 </div>
-                <div class="space-y-5">
+                <div class="space-y-4 text-sm">
                     <div>
-                        <h3 class="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Perasaanku</h3>
+                        <span class="text-neon-blue text-[10px] font-bold uppercase tracking-widest block mb-1">Perasaan</span>
                         <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
                     </div>
                     <div>
-                        <h3 class="text-red-400 text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Kesalahanku</h3>
+                        <span class="text-red-400 text-[10px] font-bold uppercase tracking-widest block mb-1">Evaluasi</span>
                         <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
                     </div>
                     <div>
-                        <h3 class="text-neon-cyan text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Pelajaranku</h3>
+                        <span class="text-neon-cyan text-[10px] font-bold uppercase tracking-widest block mb-1">Pelajaran / Resolusi</span>
                         <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
                     </div>
                 </div>
@@ -183,48 +663,78 @@
             return card;
         };
 
-        // Real-time Listener Firestore
+        window.deleteJournal = async (id) => {
+            if(confirm("Yakin ingin menghapus catatan refleksi ini?")) {
+                try {
+                    await deleteDoc(doc(db, "jurnal_refleksi", id));
+                } catch (error) {
+                    console.error("Gagal menghapus:", error);
+                }
+            }
+        };
+
+        // Realtime Listener
         const q = query(journalsRef, orderBy("timestamp", "desc"));
         onSnapshot(q, (snapshot) => {
-            entriesContainer.innerHTML = ''; 
+            const entriesContainer = document.getElementById('journalEntries');
+            const entryCountEl = document.getElementById('entryCount');
+            const connectionStatus = document.getElementById('connectionStatus');
+
+            entriesContainer.innerHTML = '';
+            entryCountEl.innerText = snapshot.size;
+            connectionStatus.innerText = "Terhubung ke Database Aman";
+
             if(snapshot.empty) {
-                entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-sm mt-10">Belum ada catatan di database.</p>';
+                entriesContainer.innerHTML = '<div class="glass-panel p-8 text-center rounded-xl text-gray-500 italic text-sm">Belum ada catatan refleksi tersimpan. Mulai tulis hari ini!</div>';
                 return;
             }
-            snapshot.forEach((doc) => {
-                const entry = doc.data();
-                const isNew = (Date.now() - entry.timestamp) < 2000; 
-                entriesContainer.appendChild(createEntryHTML(entry, isNew));
+
+            snapshot.forEach((docSnap) => {
+                const entry = docSnap.data();
+                const docId = docSnap.id;
+                const isNew = (Date.now() - entry.timestamp) < 3000;
+                entriesContainer.appendChild(createEntryHTML(entry, docId, isNew));
             });
+        }, (error) => {
+            document.getElementById('connectionStatus').innerText = "Koneksi Terputus";
         });
 
-        // Simpan ke Firestore
+        // Submit Form Jurnal
+        const form = document.getElementById('reflectionForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            playPopSound();
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="relative">Menyimpan...</span>';
 
+            const authorInput = document.getElementById('authorName').value.trim();
+
             try {
                 await addDoc(journalsRef, {
+                    author: authorInput || "Zafira Zahra Kusnadi",
+                    mood: selectedMood,
                     date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
-                    mood: currentMood,
                     feelings: document.getElementById('feelings').value,
                     mistakes: document.getElementById('mistakes').value,
                     lessons: document.getElementById('lessons').value,
                     timestamp: Date.now()
                 });
-                
-                form.reset();
-                currentMood = "Netral";
-                document.getElementById('currentMoodText').innerText = "Belum dipilih";
-                if(typeof confetti === "function") confetti(); // Opsional efek confetti
-                
+               
+                document.getElementById('feelings').value = '';
+                document.getElementById('mistakes').value = '';
+                document.getElementById('lessons').value = '';
+                moodButtons.forEach(b => b.classList.remove('active'));
+                moodButtons[0].classList.add('active');
+                selectedMood = moodButtons[0].dataset.mood;
+
+                triggerConfetti();
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             } catch (error) {
-                console.error("Error: ", error);
-                alert("Gagal nyimpen data ke Cloud.");
+                alert("Gagal menyimpan data ke database.");
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span><span class="relative">Simpan Jurnal Hari Ini 🤗</span>';
+                submitBtn.innerHTML = '<span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span><span class="relative">Simpan Jurnal Hari Ini ✨</span>';
             }
         });
     </script>
