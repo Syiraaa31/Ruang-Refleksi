@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Refleksi | Syira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#050b14', // Very dark navy/black
+                            800: '#0a1426', // Deep navy
+                            700: '#112240', // Lighter navy for borders
+                        },
+                        neon: {
+                            blue: '#4facfe',
+                            cyan: '#00f2fe'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050b14; }
+        ::-webkit-scrollbar-thumb { background: #112240; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4facfe; }
+
+        /* Background Animation */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at 50% 50%, rgba(17, 34, 64, 0.5), rgba(5, 11, 20, 1) 70%);
+            z-index: -2;
+        }
+
+        .ambient-light {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.05), transparent 70%);
+            z-index: -1;
+            animation: float 15s infinite ease-in-out alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(-10%, -10%) scale(1); }
+            100% { transform: translate(10%, 10%) scale(1.2); }
+        }
+
+        /* Neon Focus Glow */
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4), inset 0 0 10px rgba(79, 172, 254, 0.1);
+            border-color: #4facfe;
+        }
+
+        /* Slide & Fade In Animation untuk Entry Baru */
+        .entry-animate {
+            animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(10, 20, 38, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-navy-900 text-gray-300 font-sans antialiased min-h-screen relative overflow-x-hidden">
+
+    <div class="bg-glow"></div>
+    <div class="ambient-light" style="top: -10%; left: -10%;"></div>
+    <div class="ambient-light" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
+
+    <div class="max-w-4xl mx-auto p-6 md:p-12 relative z-10">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl md:text-5xl font-serif text-white mb-3 tracking-wide">RUANG REFLEKSI</h1>
+            <p class="text-gray-400 text-sm md:text-base font-light tracking-widest uppercase">Growth starts when you are honest with yourself</p>
+        </header>
+
+        <main class="glass-panel p-8 rounded-2xl shadow-2xl mb-16 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-30"></div>
+            
+            <form id="reflectionForm" class="space-y-8">
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-blue mb-3 uppercase tracking-wider" for="feelings">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        Perasaanku
+                    </label>
+                    <textarea id="feelings" rows="2" required
+                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
+                        placeholder="Apa yang mendominasi pikiranmu hari ini?"></textarea>
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-semibold text-red-400 mb-3 uppercase tracking-wider" for="mistakes">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Kesalahanku
+                    </label>
+                    <textarea id="mistakes" rows="2" required
+                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
+                        placeholder="Evaluasi secara objektif apa yang luput dari kendalimu..."></textarea>
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-semibold text-neon-cyan mb-3 uppercase tracking-wider" for="lessons">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        Pelajaranku
+                    </label>
+                    <textarea id="lessons" rows="2" required
+                        class="input-glow w-full bg-navy-800/80 border border-navy-700 rounded-xl p-4 text-gray-200 focus:outline-none transition-all duration-300 resize-none"
+                        placeholder="Apa resolusi konkrit untuk esok hari?"></textarea>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button type="submit" 
+                        class="group relative inline-flex items-center justify-center px-8 py-3 text-sm font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)] hover:shadow-[0_0_30px_rgba(79,172,254,0.6)]">
+                        <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
+                        <span class="relative">Simpan Jurnal Hari Ini</span>
+                    </button>
+                </div>
+            </form>
+        </main>
+
+        <section>
+            <h2 class="text-center text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8 relative">
+                <span class="bg-navy-900 px-4 relative z-10">Jejak Langkah (History)</span>
+                <div class="absolute top-1/2 left-0 w-full h-[1px] bg-navy-700 -z-0"></div>
+            </h2>
+            
+            <div id="journalEntries" class="space-y-6">
+                </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('reflectionForm');
+            const entriesContainer = document.getElementById('journalEntries');
+
+            // Load data dari LocalStorage
+            let journals = JSON.parse(localStorage.getItem('syiraJournalsAesthetic')) || [];
+
+            // Fungsi render satu entry
+            const createEntryHTML = (entry, animate = false) => {
+                const card = document.createElement('div');
+                card.className = `glass-panel p-6 md:p-8 rounded-2xl border-l-4 border-l-neon-blue hover:border-l-neon-cyan transition-colors duration-300 ${animate ? 'entry-animate' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="text-xs text-gray-500 mb-5 font-mono tracking-wider">${entry.date}</div>
+                    <div class="space-y-5">
+                        <div>
+                            <h3 class="text-neon-blue text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Perasaanku</h3>
+                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
+                        </div>
+                        <div>
+                            <h3 class="text-red-400 text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Kesalahanku</h3>
+                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
+                        </div>
+                        <div>
+                            <h3 class="text-neon-cyan text-xs font-bold uppercase tracking-widest mb-1.5 opacity-80">Pelajaranku</h3>
+                            <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
+                        </div>
+                    </div>
+                `;
+                return card;
+            };
+
+            // Render semua saat awal load
+            const renderJournals = () => {
+                entriesContainer.innerHTML = '';
+                if(journals.length === 0) {
+                    entriesContainer.innerHTML = '<p class="text-center text-gray-600 italic text-sm mt-10">Belum ada catatan. Ruang ini menunggumu.</p>';
+                    return;
+                }
+                
+                // Urutkan dari yang terbaru (reverse)
+                const reversedJournals = [...journals].reverse();
+                reversedJournals.forEach(entry => {
+                    entriesContainer.appendChild(createEntryHTML(entry));
+                });
+            };
+
+            // Handle Submit Form
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Ambil value
+                const feelingsVal = document.getElementById('feelings').value;
+                const mistakesVal = document.getElementById('mistakes').value;
+                const lessonsVal = document.getElementById('lessons').value;
+
+                // Buat object
+                const newEntry = {
+                    id: Date.now(),
+                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
+                    feelings: feelingsVal,
+                    mistakes: mistakesVal,
+                    lessons: lessonsVal
+                };
+
+                // Simpan ke DB lokal
+                journals.push(newEntry);
+                localStorage.setItem('syiraJournalsAesthetic', JSON.stringify(journals));
+
+                // Hapus placeholder teks kosong kalau itu input pertama
+                if (journals.length === 1) {
+                    entriesContainer.innerHTML = '';
+                }
+
+                // Tambahkan elemen baru ke paling atas dengan animasi
+                const newCard = createEntryHTML(newEntry, true);
+                entriesContainer.insertBefore(newCard, entriesContainer.firstChild);
+
+                // Clear form
+                form.reset();
+                
+                // Fokus kembali ke field pertama biar smooth flow-nya
+                document.getElementById('feelings').focus();
+            });
+
+            // Initial render
+            renderJournals();
+        });
+    </script>
+</body>
+</html>
