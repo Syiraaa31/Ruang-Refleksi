@@ -4,34 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruang Refleksi & Teman Tenang</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti Library -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-   
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: {
-                            900: '#050b14',
-                            800: '#0a1426',
-                            700: '#112240',
-                        },
-                        neon: {
-                            blue: '#4facfe',
-                            cyan: '#00f2fe',
-                            purple: '#a18cd1',
-                            gold: '#ffd700'
-                        }
+                        navy: { 900: '#020617', 800: '#0f172a', 700: '#1e293b' },
+                        dream: { purple: '#a855f7', pink: '#ec4899', blue: '#3b82f6', glow: '#c084fc' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
+                    fontFamily: { sans: ['Quicksand', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
                 }
             }
         }
@@ -39,703 +24,555 @@
 
     <style>
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050b14; }
-        ::-webkit-scrollbar-thumb { background: #112240; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4facfe; }
-
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        
         .bg-glow {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 100vh;
+            position: fixed; top: 50%; left: 50%; width: 100vw; height: 100vh;
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle at 50% 50%, rgba(17, 34, 64, 0.5), rgba(5, 11, 20, 1) 70%);
-            z-index: -2;
+            background: radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.8), rgba(2, 6, 23, 1) 80%);
+            z-index: -2; pointer-events: none;
         }
 
-        .ambient-light {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(79, 172, 254, 0.05), transparent 70%);
-            z-index: -1;
-            animation: float 15s infinite ease-in-out alternate;
+        .ambient-orb {
+            position: fixed; width: 40vw; height: 40vw; border-radius: 50%;
+            filter: blur(90px); opacity: 0.15; z-index: -1; pointer-events: none;
+            animation: drift 25s infinite alternate ease-in-out;
         }
 
-        @keyframes float {
-            0% { transform: translate(-10%, -10%) scale(1); }
-            100% { transform: translate(10%, 10%) scale(1.2); }
-        }
-
-        .input-glow:focus {
-            box-shadow: 0 0 15px rgba(79, 172, 254, 0.3);
-            border-color: #4facfe;
+        @keyframes drift {
+            0% { transform: translate(-5%, -5%) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.2); }
         }
 
         .glass-panel {
-            background: rgba(10, 20, 38, 0.65);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-panel-highlight {
+            background: rgba(168, 85, 247, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
         }
 
-        .mood-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .mood-btn.active {
-            background: rgba(79, 172, 254, 0.2);
-            border-color: #4facfe;
-            box-shadow: 0 0 15px rgba(79, 172, 254, 0.4);
-            transform: translateY(-3px);
+        .input-glow:focus { box-shadow: 0 0 20px rgba(168, 85, 247, 0.2); border-color: #a855f7; }
+        
+        .breathing { animation: breath 5s infinite ease-in-out; }
+        @keyframes breath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        
+        .mood-btn { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); filter: grayscale(70%) opacity(60%); }
+        .mood-btn.active { 
+            background: rgba(168, 85, 247, 0.15); border-color: #a855f7; 
+            filter: grayscale(0%) opacity(100%); transform: translateY(-4px); 
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.15);
         }
 
+        /* Music Player Floating */
+        .music-player {
+            position: fixed; bottom: 25px; right: 25px; z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        /* Notification Popup Animation */
+        @keyframes slideInRight {
+            0% { transform: translateX(120%); opacity: 0; }
+            10% { transform: translateX(-5%); opacity: 1; }
+            15% { transform: translateX(0); opacity: 1; }
+            85% { transform: translateX(0); opacity: 1; }
+            95% { transform: translateX(5%); opacity: 1; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+        .notif-popup {
+            position: fixed; top: 25px; right: 25px; z-index: 100;
+            animation: slideInRight 8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        /* Star Game */
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 8px #ffd700); }
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 10px #fcd34d); }
         }
-        .star-item {
-            animation: twinkle 3s infinite ease-in-out;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .star-item:hover {
-            transform: scale(1.5) rotate(15deg);
-        }
-
-        @keyframes slideFadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .entry-animate {
-            animation: slideFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .live-dot {
-            animation: pulse-slow 2s infinite;
-        }
+        .star-item { animation: twinkle 3s infinite ease-in-out; cursor: pointer; transition: transform 0.2s; }
+        .star-item:hover { transform: scale(1.4) rotate(15deg); }
+        
+        /* Live Dot Indicator */
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .live-dot { animation: pulse-slow 2s infinite; }
     </style>
 </head>
-<body class="bg-navy-900 text-gray-300 font-sans antialiased min-h-screen relative overflow-x-hidden pb-24">
+<body class="bg-navy-900 text-gray-200 font-sans antialiased min-h-screen relative overflow-x-hidden pb-32 selection:bg-dream-purple selection:text-white">
 
+    <!-- Ambient Backgrounds -->
     <div class="bg-glow"></div>
-    <div class="ambient-light" style="top: -10%; left: -10%;"></div>
-    <div class="ambient-light" style="bottom: -10%; right: -10%; animation-delay: -5s;"></div>
+    <div class="ambient-orb bg-dream-purple" style="top: -10%; left: -10%;"></div>
+    <div class="ambient-orb bg-dream-pink" style="bottom: -20%; right: -10%; animation-delay: -5s;"></div>
+    <div class="ambient-orb bg-dream-blue" style="top: 40%; left: 40%; animation-delay: -10s; filter: blur(120px); opacity: 0.1;"></div>
 
-    <div class="max-w-3xl mx-auto p-6 md:p-10 relative z-10">
-        <!-- Header -->
-        <header class="mb-6 text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-navy-800/90 border border-navy-700 text-xs text-neon-blue mb-4 shadow-sm">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
-                <span id="connectionStatus">Terhubung ke Database Aman</span>
+    <!-- Live Notification Anchor (Hidden by default, triggered by JS) -->
+    <div id="notifAnchor" class="hidden pointer-events-none"></div>
+
+    <!-- Floating BGM Player -->
+    <div class="music-player glass-panel px-4 py-3 rounded-full flex items-center gap-3 border-dream-purple/30 hover:border-dream-purple/60 cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.2)]" onclick="toggleBGM()">
+        <div class="w-9 h-9 rounded-full bg-dream-purple/20 flex items-center justify-center relative">
+            <span id="musicIcon" class="text-xl">🔇</span>
+            <div id="musicWave" class="absolute inset-0 rounded-full border border-dream-purple hidden breathing"></div>
+        </div>
+        <div class="flex flex-col pr-2">
+            <span class="text-[10px] font-bold text-dream-purple uppercase tracking-widest">Lo-Fi Vibes</span>
+            <span id="musicStatus" class="text-xs text-gray-400 font-light">BGM Mati (Klik)</span>
+        </div>
+        <!-- Safe, calm, royalty-free lo-fi track -->
+        <audio id="bgmAudio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+    </div>
+
+    <div class="max-w-3xl mx-auto p-5 md:p-8 relative z-10">
+        
+        <!-- Header & Live Status -->
+        <header class="mb-6 text-center pt-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-800/80 border border-white/5 text-[10px] text-gray-400 mb-5 shadow-sm">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                <span id="connectionStatus">Sinkronisasi Real-Time Aktif</span>
             </div>
-            <h1 class="text-4xl md:text-5xl font-serif text-white mb-2 tracking-wide">RUANG REFLEKSI</h1>
-            <p class="text-gray-400 text-xs md:text-sm font-light tracking-widest uppercase">Tempat aman untuk kamu & teman-temanmu bercerita</p>
+            <h1 class="text-4xl md:text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-dream-purple via-dream-pink to-dream-blue mb-2 tracking-wide breathing">Teman Tenang</h1>
+            <p class="text-gray-400 text-xs md:text-sm font-light tracking-widest uppercase">Ruang aman untuk berkeluh kesah & bertumbuh</p>
         </header>
 
         <!-- MINI GAME: LANGIT BINTANG KEBERUNTUNGAN -->
-        <div class="glass-panel p-4 rounded-2xl mb-6 border border-neon-gold/30 bg-gradient-to-r from-navy-800/90 via-indigo-950/40 to-navy-800/90 relative overflow-hidden text-center">
-            <div class="absolute top-2 left-3 text-[10px] uppercase tracking-widest text-neon-gold font-mono flex items-center gap-1">
-                <span>✨</span> Mini Game: Langit Validasi Bintang (Klik Bintang di Bawah)
+        <div class="glass-panel p-4 rounded-2xl mb-6 border border-yellow-500/20 bg-gradient-to-r from-navy-800/90 via-indigo-950/40 to-navy-800/90 relative overflow-hidden text-center">
+            <div class="absolute top-2 left-3 text-[10px] uppercase tracking-widest text-yellow-500/80 font-mono flex items-center gap-1">
+                <span>✨</span> Pesan Semesta Hari Ini
             </div>
             <div class="flex justify-center items-center gap-6 sm:gap-10 py-5 pt-6">
-                <div onclick="clickStar(0)" class="star-item text-2xl" style="animation-delay: 0s;" title="Klik bintang ini!">⭐</div>
-                <div onclick="clickStar(1)" class="star-item text-3xl" style="animation-delay: 0.8s;" title="Klik bintang ini!">🌟</div>
-                <div onclick="clickStar(2)" class="star-item text-2xl" style="animation-delay: 1.5s;" title="Klik bintang ini!">✨</div>
-                <div onclick="clickStar(3)" class="star-item text-3xl" style="animation-delay: 0.4s;" title="Klik bintang ini!">💫</div>
-                <div onclick="clickStar(4)" class="star-item text-2xl" style="animation-delay: 1.2s;" title="Klik bintang ini!">⭐</div>
+                <div onclick="clickStar(0)" class="star-item text-2xl" style="animation-delay: 0s;" title="Sentuh Bintang">⭐</div>
+                <div onclick="clickStar(1)" class="star-item text-3xl" style="animation-delay: 0.8s;" title="Sentuh Bintang">🌟</div>
+                <div onclick="clickStar(2)" class="star-item text-2xl" style="animation-delay: 1.5s;" title="Sentuh Bintang">✨</div>
+                <div onclick="clickStar(3)" class="star-item text-3xl" style="animation-delay: 0.4s;" title="Sentuh Bintang">💫</div>
+                <div onclick="clickStar(4)" class="star-item text-2xl" style="animation-delay: 1.2s;" title="Sentuh Bintang">⭐</div>
             </div>
-            <p id="starMessage" class="text-xs text-neon-cyan italic font-light px-2 min-h-[20px]">"Sentuh salah satu bintang di atas untuk melihat pesan rahasia hari ini."</p>
+            <p id="starMessage" class="text-xs text-dream-glow italic font-light px-2 min-h-[20px]">"Sentuh salah satu bintang di atas untuk melihat pesan rahasia hari ini."</p>
         </div>
 
-        <!-- Quote Banner & Voice Over Button -->
-        <div class="glass-panel p-4 rounded-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 border border-neon-blue/20 shadow-lg">
-            <p id="quoteText" class="text-xs md:text-sm text-neon-cyan italic tracking-wide font-light text-center sm:text-left transition-opacity duration-500">"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan."</p>
-            <button onclick="speakCurrentQuote()" class="px-3.5 py-2 rounded-xl bg-navy-800 border border-navy-700 text-neon-blue text-xs font-bold hover:bg-navy-700 transition-all flex items-center gap-1.5 shrink-0">
-                <span>🎧</span> Dengarkan Suara
-            </button>
-        </div>
-
-        <!-- Tombol Pelukan Maya & Cemas -->
-        <div class="glass-panel p-5 rounded-2xl mb-8 border border-neon-purple/30 bg-gradient-to-r from-navy-800/80 to-purple-950/20 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-                <h3 class="text-sm font-bold text-white mb-1 flex items-center gap-2">
-                    <span>🫂</span> Sedang Merasa Cemas atau Kewalahan?
-                </h3>
-                <p class="text-xs text-gray-400">Klik tombol di samping untuk mendapat validasi instan & panduan menenangkan diri.</p>
+        <!-- Quote Banner & Anxiety Hug Modal Trigger -->
+        <div class="glass-panel p-5 rounded-2xl mb-8 flex flex-col md:flex-row items-center justify-between gap-4 border border-dream-blue/20">
+            <div class="text-center md:text-left flex-1">
+                <p id="quoteText" class="text-xs md:text-sm text-gray-300 italic tracking-wide font-light transition-opacity duration-500">"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan."</p>
+                <button onclick="speakCurrentQuote()" class="mt-2 text-[10px] text-dream-purple uppercase tracking-widest font-bold hover:text-dream-pink transition-colors">🔊 Dengarkan Suara</button>
             </div>
-            <button onclick="openAnxietyReliefModal(); playPopSound();" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold uppercase tracking-wider hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shrink-0">
-                Beri Aku Pelukan Maya ✨
+            <button onclick="openAnxietyReliefModal(); playPopSound();" class="px-5 py-3 rounded-xl bg-gradient-to-r from-dream-purple to-dream-blue text-white text-[11px] font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-lg shrink-0 flex items-center gap-2">
+                <span>🫂</span> Butuh Pelukan Maya
             </button>
         </div>
 
-        <!-- TAB MENU UTAMA (Jurnal, Kotak Curhat, & Playlist Lagu Penenang) -->
-        <div class="grid grid-cols-3 gap-1 rounded-xl bg-navy-800/80 p-1 mb-6 border border-navy-700">
-            <button onclick="switchTab('journal'); playPopSound();" id="tabJournalBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center">
-                📝 Jurnal Harian
-            </button>
-            <button onclick="switchTab('vent'); playPopSound();" id="tabVentBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center">
-                💌 Kotak Curhat
-            </button>
-            <button onclick="switchTab('music'); playPopSound();" id="tabMusicBtn" class="py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center">
-                🎶 Playlist Bobo
+        <!-- Tab Navigasi Baru -->
+        <div class="flex p-1.5 glass-panel rounded-2xl mb-8 border border-white/5 mx-auto max-w-2xl overflow-x-auto">
+            <button onclick="switchTab('journal'); playPopSound();" id="tabJournal" class="flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-white bg-white/10 shadow-lg">📝 Jurnal</button>
+            <button onclick="switchTab('vent'); playPopSound();" id="tabVent" class="flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-gray-500 hover:text-white">💌 Kirim Surat</button>
+            <button onclick="switchTab('inbox'); playPopSound();" id="tabInbox" class="flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-gray-500 hover:text-white relative">
+                📬 Kotak Masuk
+                <!-- Red dot indicator for new letters -->
+                <span id="newLetterBadge" class="absolute top-2 right-2 w-2 h-2 bg-pink-500 rounded-full hidden animate-ping"></span>
             </button>
         </div>
 
-        <!-- Form 1: Jurnal Harian -->
-        <main id="journalSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-blue to-transparent opacity-40"></div>
-            
-            <form id="reflectionForm" class="space-y-6">
-                <!-- Input Nama Pengirim (Bisa diisi siapa saja / temanmu) -->
-                <div>
-                    <label class="block text-xs font-bold text-neon-cyan uppercase tracking-widest mb-2" for="authorName">Nama Pengirim / Pemilik Catatan</label>
-                    <input type="text" id="authorName" required value="Zafira Zahra Kusnadi"
-                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all"
-                        placeholder="Contoh: Zafira, Nama Temenmu, dll">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">1. Bagaimana suasana hatimu saat ini?</label>
-                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5" id="moodContainer">
-                        <button type="button" data-mood="😊 Bahagia" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">😊</span>
-                            <span class="text-[10px]">Bahagia</span>
-                        </button>
-                        <button type="button" data-mood="😌 Tenang" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">😌</span>
-                            <span class="text-[10px]">Tenang</span>
-                        </button>
-                        <button type="button" data-mood="⚡ Semangat" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">⚡</span>
-                            <span class="text-[10px]">Semangat</span>
-                        </button>
-                        <button type="button" data-mood="🌧️ Lelah" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">🌧️</span>
-                            <span class="text-[10px]">Lelah</span>
-                        </button>
-                        <button type="button" data-mood="💭 Cemas" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">💭</span>
-                            <span class="text-[10px]">Cemas</span>
-                        </button>
-                        <button type="button" data-mood="🥀 Sedih" class="mood-btn glass-panel p-3 rounded-xl flex flex-col items-center justify-center gap-1 border border-navy-700 hover:border-neon-blue text-xs text-gray-300">
-                            <span class="text-2xl">🥀</span>
-                            <span class="text-[10px]">Sedih</span>
-                        </button>
+        <!-- ==================== SECTION 1: JURNAL HARIAN ==================== -->
+        <div id="journalSection" class="space-y-8">
+            <main class="glass-panel p-6 md:p-10 rounded-3xl shadow-2xl border-t border-t-white/10">
+                <form id="reflectionForm" class="space-y-7">
+                    <div>
+                        <label class="block text-[10px] font-bold text-dream-purple uppercase tracking-widest mb-2">Penulis Jurnal</label>
+                        <input type="text" id="authorName" required value="Syira & Zafira" class="input-glow w-full bg-navy-900/50 border border-white/10 rounded-2xl p-4 text-sm text-gray-200 focus:outline-none transition-all">
                     </div>
-                </div>
 
-                <div class="pt-2">
-                    <label class="flex items-center gap-2 text-xs font-bold text-neon-blue mb-2 uppercase tracking-wider" for="feelings">
-                        2. Ceritakan Alasan / Detail Perasaanmu
-                    </label>
-                    <textarea id="feelings" rows="2" required
-                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
-                        placeholder="Hal apa yang paling mendominasi pikiranmu hari ini?"></textarea>
-                </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-dream-pink uppercase tracking-widest mb-3">Pilih Awan Perasaanmu Hari Ini</label>
+                        <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                            <button type="button" data-mood="☁️ Tenang" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5 active">
+                                <span class="text-3xl drop-shadow-md">☁️</span><span class="text-[10px] text-gray-300 font-medium">Tenang</span>
+                            </button>
+                            <button type="button" data-mood="🌸 Bahagia" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5">
+                                <span class="text-3xl drop-shadow-md">🌸</span><span class="text-[10px] text-gray-300 font-medium">Bahagia</span>
+                            </button>
+                            <button type="button" data-mood="✨ Bersyukur" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5">
+                                <span class="text-3xl drop-shadow-md">✨</span><span class="text-[10px] text-gray-300 font-medium">Bersyukur</span>
+                            </button>
+                            <button type="button" data-mood="🌧️ Lelah" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5">
+                                <span class="text-3xl drop-shadow-md">🌧️</span><span class="text-[10px] text-gray-300 font-medium">Lelah</span>
+                            </button>
+                            <button type="button" data-mood="🌪️ Cemas" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5">
+                                <span class="text-3xl drop-shadow-md">🌪️</span><span class="text-[10px] text-gray-300 font-medium">Cemas</span>
+                            </button>
+                            <button type="button" data-mood="🥀 Rapuh" class="mood-btn glass-panel p-3 rounded-2xl flex flex-col items-center gap-2 border border-white/5">
+                                <span class="text-3xl drop-shadow-md">🥀</span><span class="text-[10px] text-gray-300 font-medium">Rapuh</span>
+                            </button>
+                        </div>
+                    </div>
 
-                <div>
-                    <label class="flex items-center gap-2 text-xs font-bold text-red-400 mb-2 uppercase tracking-wider" for="mistakes">
-                        3. Evaluasi Kesalahan / Hal yang Luput dari Kendali
-                    </label>
-                    <textarea id="mistakes" rows="2" required
-                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
-                        placeholder="Apa yang bisa diperbaiki atau apa yang tidak perlu dikhawatirkan secara berlebihan?"></textarea>
-                </div>
+                    <div class="space-y-6">
+                        <div>
+                            <textarea id="feelings" rows="2" required class="input-glow w-full bg-navy-900/50 border border-white/10 rounded-2xl p-4 text-sm text-gray-200 focus:outline-none transition-all resize-none" placeholder="Tumpahkan detail perasaanmu di sini..."></textarea>
+                        </div>
+                        <div>
+                            <textarea id="mistakes" rows="2" required class="input-glow w-full bg-navy-900/50 border border-white/10 rounded-2xl p-4 text-sm text-gray-200 focus:outline-none transition-all resize-none" placeholder="Apa yang luput dari kendali hari ini? (Evaluasi)"></textarea>
+                        </div>
+                        <div>
+                            <textarea id="lessons" rows="2" required class="input-glow w-full bg-navy-900/50 border border-white/10 rounded-2xl p-4 text-sm text-gray-200 focus:outline-none transition-all resize-none" placeholder="Resolusi konkrit atau afirmasi positif untuk besok..."></textarea>
+                        </div>
+                    </div>
 
-                <div>
-                    <label class="flex items-center gap-2 text-xs font-bold text-neon-cyan mb-2 uppercase tracking-wider" for="lessons">
-                        4. Pelajaran Hidup / Resolusi Esok Hari
-                    </label>
-                    <textarea id="lessons" rows="2" required
-                        class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none transition-all resize-none"
-                        placeholder="Satu langkah kecil konkrit yang akan kamu lakukan esok hari..."></textarea>
-                </div>
-
-                <div class="text-center pt-3">
-                    <button type="submit" id="submitBtn"
-                        class="group relative inline-flex items-center justify-center px-8 py-3 text-xs font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:from-cyan-500 hover:to-blue-500 overflow-hidden shadow-[0_0_20px_rgba(79,172,254,0.3)]">
-                        <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-                        <span class="relative">Simpan Jurnal Hari Ini ✨</span>
+                    <button type="submit" id="submitBtn" class="w-full py-4 rounded-2xl bg-gradient-to-r from-dream-purple to-dream-blue text-white text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                        Simpan Jurnal ✨
                     </button>
-                </div>
-            </form>
-        </main>
+                </form>
+            </main>
 
-        <!-- Form 2: Kotak Surat Curhat Interaktif -->
-        <main id="ventSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden hidden">
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-purple to-transparent opacity-40"></div>
-            
-            <div class="mb-4">
-                <h2 class="text-base font-bold text-white mb-1">Kotak Surat Curhat 💌</h2>
-                <p class="text-xs text-gray-400">Tuliskan beban pikiran atau ketakutanmu. Bayangkan kamu sedang memasukkannya ke dalam amplop rahasia untuk ditenangkan.</p>
+            <section>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Jejak Refleksi Bersama</h2>
+                    <span class="text-[10px] font-mono bg-white/5 border border-white/10 px-3 py-1 rounded-full text-dream-purple">Total: <span id="entryCount">0</span> Jurnal</span>
+                </div>
+                <div id="journalEntries" class="space-y-4 pb-10"></div>
+            </section>
+        </div>
+
+        <!-- ==================== SECTION 2: KIRIM SURAT CURHAT ==================== -->
+        <main id="ventSection" class="glass-panel p-6 md:p-10 rounded-3xl shadow-2xl mb-12 border-t border-t-white/10 hidden">
+            <div class="text-center mb-8">
+                <span class="text-5xl drop-shadow-lg mb-4 block">💌</span>
+                <h2 class="text-xl font-serif text-white mb-2">Kirim Surat Rahasia</h2>
+                <p class="text-xs text-gray-400 font-light px-4 leading-relaxed">Surat yang kamu tulis di sini akan memicu <b class="text-dream-pink">notifikasi real-time</b> di layar pasanganmu. Gunakan ini saat kamu butuh ditenangkan atau didengarkan.</p>
             </div>
 
             <form id="ventForm" class="space-y-4">
-                <textarea id="ventInput" rows="4" required
-                    class="input-glow w-full bg-navy-800/90 border border-navy-700 rounded-xl p-4 text-sm text-gray-200 focus:outline-none transition-all resize-none"
-                    placeholder="Tumpahkan semuanya di sini... Contoh: 'Aku merasa lelah dan cemas dengan target-targetku...'"></textarea>
-                
-                <button type="submit" id="ventSubmitBtn"
-                    class="w-full py-3 text-xs font-bold text-white uppercase tracking-widest transition-all duration-300 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-500 hover:to-blue-500 shadow-md flex items-center justify-center gap-2">
-                    <span>✉️</span> Kirim Surat ke Kotak Tenang
+                <textarea id="ventInput" rows="5" required class="input-glow w-full bg-navy-900/50 border border-white/10 rounded-2xl p-5 text-sm text-gray-200 focus:outline-none transition-all resize-none" placeholder="Ketik curhatan terdalammu di sini..."></textarea>
+                <button type="submit" id="ventSubmitBtn" class="w-full py-4 text-xs font-bold text-white uppercase tracking-widest bg-white/10 border border-white/20 rounded-2xl hover:bg-white/20 transition-all backdrop-blur-sm flex items-center justify-center gap-2">
+                    ✈️ Terbangkan Surat ke Pasangan
                 </button>
             </form>
 
-            <div id="ventResultBox" class="mt-6 p-5 rounded-xl bg-navy-800/90 border border-purple-500/30 hidden">
-                <h4 class="text-xs font-bold text-neon-cyan uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                    <span>💡</span> Balasan & Tips Tenang Untukmu:
-                </h4>
-                <div id="ventAdviceContent" class="text-xs text-gray-300 leading-relaxed space-y-2 font-light"></div>
-                <button onclick="speakVentAdvice()" class="mt-3 px-3 py-1.5 rounded-lg bg-navy-700 text-neon-blue text-[10px] font-bold uppercase tracking-wider hover:bg-navy-600 transition-colors flex items-center gap-1">
-                    <span>🔊</span> Bacakan Balasan Ini
-                </button>
+            <div id="ventSuccess" class="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center hidden">
+                <p class="text-xs text-emerald-300 font-medium">Surat berhasil diterbangkan! Pasanganmu akan menerima notifikasi di layarnya. 💙</p>
             </div>
         </main>
 
-        <!-- Tab 3: Playlist Lagu Penenang & Tidur Nyenyak -->
-        <main id="musicSection" class="glass-panel p-6 md:p-8 rounded-2xl shadow-2xl mb-12 relative overflow-hidden hidden space-y-6">
-            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-neon-gold to-transparent opacity-40"></div>
-            
-            <div class="text-center md:text-left">
-                <h2 class="text-base font-bold text-white mb-1">🎶 Playlist Penenang & Pengantar Tidur</h2>
-                <p class="text-xs text-gray-400">Daftar lagu pilihan untuk meredakan kecemasan, overthinking, dan membantu tidur lebih nyenyak.</p>
+        <!-- ==================== SECTION 3: KOTAK MASUK SURAT ==================== -->
+        <main id="inboxSection" class="hidden space-y-6">
+            <div class="text-center mb-6 pt-4">
+                <h2 class="text-xl font-serif text-white mb-2 flex justify-center items-center gap-2"><span>📬</span> Surat Dari Pasanganmu</h2>
+                <p class="text-xs text-gray-400 font-light">Surat-surat rahasia yang butuh perhatian dan pelukanmu.</p>
             </div>
-
-            <!-- Kategori 1 -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-neon-blue uppercase tracking-widest">1. Lo-Fi & Ambient Beats (Fokus & Menenangkan Pikiran)</h3>
-                <div class="grid gap-3">
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Weightless" — Marconi Union</div>
-                            <div class="text-[11px] text-gray-400 font-light">Secara ilmiah menurunkan hormon stres kortisol hingga 65% dan memperlambat detak jantung.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Marconi+Union+Weightless" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Apocalypse" — Cigarettes After Sex</div>
-                            <div class="text-[11px] text-gray-400 font-light">Tempo lambat & vokal lembut untuk menemani pikiran yang sedang riuh.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Cigarettes+After+Sex+Apocalypse" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Snowfall" — Øneheart & Reidku</div>
-                            <div class="text-[11px] text-gray-400 font-light">Ambient instrumental melayang yang dingin namun menenangkan sebelum tidur.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Oneheart+Reidku+Snowfall" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kategori 2 -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-neon-cyan uppercase tracking-widest">2. Piano & Akustik Minimalis (Damai & Hangat)</h3>
-                <div class="grid gap-3">
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"River Flows in You" — Yiruma</div>
-                            <div class="text-[11px] text-gray-400 font-light">Klasik modern piano yang mengalir lembut, melepas ketegangan di dada.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Yiruma+River+Flows+in+You" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Gymnopédie No. 1" — Erik Satie</div>
-                            <div class="text-[11px] text-gray-400 font-light">Musik klasik minimalis yang memberikan ruang kosong bagi otak untuk berhenti overthinking.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Gymnopedie+No+1+Erik+Satie" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Comptine d'un autre été" — Yann Tiersen</div>
-                            <div class="text-[11px] text-gray-400 font-light">Melodi akordeon/piano manis yang memberikan rasa nostalgia hangat.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Yann+Tiersen+Comptine+d+un+autre+ete" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kategori 3 -->
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold text-neon-purple uppercase tracking-widest">3. Suara Alam & White Noise (Pengantar Tidur Nyenyak)</h3>
-                <div class="grid gap-3">
-                    <div class="bg-navy-800/80 p-3.5 rounded-xl border border-navy-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                        <div>
-                            <div class="text-xs font-bold text-white">"Rain Sounds for Sleep" / "Deep Sleep Forest Ambient"</div>
-                            <div class="text-[11px] text-gray-400 font-light">Suara rintik hujan konstan sebagai white noise alami pemicu gelombang tidur delta.</div>
-                        </div>
-                        <a href="https://www.youtube.com/results?search_query=Rain+Sounds+for+Sleep+Ambient" target="_blank" class="px-3 py-1.5 rounded-lg bg-navy-700 hover:bg-navy-600 text-neon-blue text-[11px] font-bold transition-all shrink-0">
-                            ▶️ Putar di YouTube
-                        </a>
-                    </div>
-                </div>
+            <div id="inboxEntries" class="space-y-4 pb-10">
+                <p class="text-center text-gray-500 italic text-sm mt-10">Belum ada surat masuk.</p>
             </div>
         </main>
 
-        <!-- Bagian Riwayat Jurnal -->
-        <section>
-            <div class="flex items-center justify-between mb-6 px-1">
-                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Jejak Refleksi Tersimpan</h2>
-                <span class="text-xs font-mono bg-navy-800 border border-navy-700 px-3 py-1 rounded-full text-neon-blue">Total: <span id="entryCount">0</span> Catatan</span>
-            </div>
-           
-            <div id="journalEntries" class="space-y-4">
-                <p class="text-center text-gray-500 italic text-sm py-8">Memuat data dari cloud...</p>
-            </div>
-        </section>
     </div>
 
     <!-- Modal Popup: Validasi Darurat & Pernapasan -->
     <div id="anxietyModal" class="fixed inset-0 z-50 bg-navy-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="glass-panel max-w-md w-full p-6 rounded-2xl border border-neon-purple/40 relative shadow-2xl animate-scaleIn">
+        <div class="glass-panel max-w-md w-full p-6 rounded-3xl border border-dream-blue/40 relative shadow-2xl transition-all">
             <button onclick="closeAnxietyReliefModal(); playPopSound();" class="absolute top-4 right-4 text-gray-400 hover:text-white text-sm">✕</button>
             <div class="text-center">
                 <span class="text-4xl mb-3 block">🫂✨</span>
                 <h3 class="text-base font-serif text-white font-bold mb-2">Validasi Untukmu Saat Ini</h3>
-                <p class="text-xs text-neon-cyan italic mb-4 leading-relaxed">"Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup."</p>
+                <p class="text-xs text-dream-glow italic mb-5 leading-relaxed">"Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup."</p>
                 
-                <div class="bg-navy-800/90 p-4 rounded-xl text-left border border-navy-700 space-y-2 mb-5">
-                    <span class="text-[10px] font-bold text-neon-blue uppercase tracking-wider block">Tips Cepat Meredakan Cemas (Box Breathing):</span>
-                    <ul class="text-xs text-gray-300 space-y-1 font-light list-disc pl-4">
-                        <li>Tarik napas dalam lewat hidung selama <b class="text-white">4 detik</b>.</li>
-                        <li>Tahan napasmu selama <b class="text-white">4 detik</b>.</li>
-                        <li>Hembuskan perlahan lewat mulut selama <b class="text-white">4 detik</b>.</li>
-                        <li>Tahan kosong selama <b class="text-white">4 detik</b>. Ulangi 3 kali.</li>
+                <div class="glass-panel-highlight p-4 rounded-2xl text-left space-y-3 mb-6">
+                    <span class="text-[10px] font-bold text-dream-blue uppercase tracking-wider block">Tips Box Breathing (Penenang Instan):</span>
+                    <ul class="text-xs text-gray-300 space-y-2 font-light">
+                        <li class="flex gap-2"><span>🌬️</span> Tarik napas dari hidung <b class="text-white">4 detik</b>.</li>
+                        <li class="flex gap-2"><span>⏸️</span> Tahan napasmu <b class="text-white">4 detik</b>.</li>
+                        <li class="flex gap-2"><span>💨</span> Hembuskan perlahan <b class="text-white">4 detik</b>.</li>
+                        <li class="flex gap-2"><span>⏸️</span> Tahan kosong <b class="text-white">4 detik</b>. (Ulangi 3x)</li>
                     </ul>
                 </div>
 
-                <div class="flex gap-2">
-                    <button onclick="speakAnxietyText()" class="flex-1 py-2 rounded-xl bg-navy-800 border border-navy-700 text-neon-blue text-xs font-bold uppercase tracking-wider hover:bg-navy-700 transition-colors">
+                <div class="flex gap-3">
+                    <button onclick="speakAnxietyText()" class="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-white/10 transition-colors">
                         🔊 Dengarkan
                     </button>
-                    <button onclick="closeAnxietyReliefModal(); triggerConfetti(); playPopSound();" class="flex-1 py-2 rounded-xl bg-neon-blue text-navy-900 font-bold text-xs uppercase tracking-wider hover:bg-neon-cyan transition-colors">
-                        Tenang 💙
+                    <button onclick="closeAnxietyReliefModal(); triggerConfetti(); playPopSound();" class="flex-1 py-3 rounded-xl bg-dream-blue text-white font-bold text-[11px] uppercase tracking-wider hover:bg-blue-400 transition-colors shadow-lg">
+                        Aku Tenang 💙
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script Firebase & Game / Audio Logic -->
+    <!-- Script Utama (Firebase & Logic) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Konfigurasi Database Firebase (Sesuai milik Syira)
         const firebaseConfig = {
             apiKey: "AIzaSyDZAm_e2wp3RiIOoZAIKYzkjj4_tG6otzE",
             authDomain: "ruang-refleksi-33035.firebaseapp.com",
             projectId: "ruang-refleksi-33035",
             storageBucket: "ruang-refleksi-33035.firebasestorage.app",
             messagingSenderId: "156379297699",
-            appId: "1:156379297699:web:6d8a206a31e678a5b00c16",
-            measurementId: "G-00H3B5NXL4"
+            appId: "1:156379297699:web:6d8a206a31e678a5b00c16"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        
+        // Koleksi Database
         const journalsRef = collection(db, "jurnal_refleksi");
+        const ventsRef = collection(db, "surat_rahasia"); // Koleksi baru khusus curhat
 
-        // Web Audio Effect (Suara Klik Interaktif)
+        // 1. Logic Interaktif Audio & BGM
+        const audio = document.getElementById('bgmAudio');
+        audio.volume = 0.25; 
+        window.toggleBGM = () => {
+            const icon = document.getElementById('musicIcon');
+            const status = document.getElementById('musicStatus');
+            const wave = document.getElementById('musicWave');
+            if (audio.paused) {
+                audio.play(); icon.innerText = "🎧"; status.innerText = "Memutar Lo-Fi (Klik u/ Mati)"; wave.classList.remove('hidden');
+            } else {
+                audio.pause(); icon.innerText = "🔇"; status.innerText = "BGM Mati (Klik u/ Nyala)"; wave.classList.add('hidden');
+            }
+        };
+
         window.playPopSound = () => {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(580, ctx.currentTime);
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(580, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
                 gain.gain.setValueAtTime(0.1, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.08);
             } catch(e) {}
         };
 
-        // Mini Game: Klik Bintang Berkelap-kelip
+        // 2. Fitur In-App Notification (Live Toast Popup)
+        window.showInAppNotif = (pengirim, pesan) => {
+            playPopSound();
+            // Buat elemen popup
+            const notif = document.createElement('div');
+            notif.className = "notif-popup glass-panel-highlight p-4 rounded-2xl flex items-start gap-3 shadow-2xl border-dream-pink/40 max-w-xs pointer-events-auto cursor-pointer";
+            notif.innerHTML = `
+                <div class="text-2xl pt-1">💌</div>
+                <div>
+                    <h4 class="text-[11px] font-bold text-dream-pink uppercase tracking-widest mb-1">Surat Baru Dari ${pengirim}!</h4>
+                    <p class="text-xs text-gray-200 font-light line-clamp-2">"${pesan}"</p>
+                    <span class="text-[9px] text-gray-400 mt-2 block">Klik untuk membaca di Kotak Masuk</span>
+                </div>
+            `;
+            
+            // Kalau popup diklik, arahkan ke tab Kotak Masuk
+            notif.onclick = () => {
+                switchTab('inbox');
+                notif.remove();
+            };
+
+            document.getElementById('notifAnchor').appendChild(notif);
+            triggerConfetti();
+
+            // Munculkan indikator titik merah di tab Kotak Masuk
+            document.getElementById('newLetterBadge').classList.remove('hidden');
+
+            // Hapus DOM otomatis setelah animasi selesai (8 detik)
+            setTimeout(() => { if(notif.parentNode) notif.remove(); }, 8500);
+        };
+
+        // 3. Tab Management
+        window.switchTab = (tab) => {
+            ['journalSection', 'ventSection', 'inboxSection'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            ['tabJournal', 'tabVent', 'tabInbox'].forEach(id => document.getElementById(id).className = "flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-gray-500 hover:text-white");
+            
+            if (tab === 'journal') {
+                document.getElementById('journalSection').classList.remove('hidden');
+                document.getElementById('tabJournal').className = "flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-white bg-white/10 shadow-lg";
+            } else if (tab === 'vent') {
+                document.getElementById('ventSection').classList.remove('hidden');
+                document.getElementById('tabVent').className = "flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-white bg-white/10 shadow-lg";
+            } else if (tab === 'inbox') {
+                document.getElementById('inboxSection').classList.remove('hidden');
+                document.getElementById('tabInbox').className = "flex-1 min-w-[100px] py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest rounded-xl transition-all text-white bg-white/10 shadow-lg relative";
+                document.getElementById('newLetterBadge').classList.add('hidden'); // Matikan titik merah
+            }
+        };
+
+        // 4. Game Bintang & TTS Quotes
         const starMessages = [
-            "✨ Bintang 1: 'Ingatlah bahwa setiap badai pasti berlalu, dan kamu selalu memiliki kekuatan untuk melewatinya.'",
-            "🌟 Bintang 2: 'Dirimu hari ini sudah melakukan yang terbaik. Berbanggalah pada proses kecil yang kau lalui.'",
-            "✨ Bintang 3: 'Jangan terlalu keras pada dirimu sendiri. Kamu sedang belajar dan bertumbuh setiap hari.'",
-            "💫 Bintang 4: 'Kejujuranmu pada diri sendiri adalah bukti betapa berjiwa besarnya kamu.'",
-            "⭐ Bintang 5: 'Tarik napas dalam-dalam. Semuanya akan baik-baik saja pada waktunya.'"
+            "Bintang 1: Ingatlah bahwa setiap badai pasti berlalu, dan kamu selalu memiliki kekuatan untuk melewatinya.",
+            "Bintang 2: Dirimu hari ini sudah melakukan yang terbaik. Berbanggalah pada proses kecil yang kau lalui.",
+            "Bintang 3: Jangan terlalu keras pada dirimu sendiri. Kamu sedang belajar dan bertumbuh setiap hari.",
+            "Bintang 4: Kejujuranmu pada diri sendiri adalah bukti betapa berjiwa besarnya kamu.",
+            "Bintang 5: Tarik napas dalam-dalam. Semuanya akan baik-baik saja pada waktunya."
         ];
         window.clickStar = (index) => {
-            playPopSound();
-            triggerConfetti();
-            const msgEl = document.getElementById('starMessage');
-            msgEl.innerText = starMessages[index];
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const speech = new SpeechSynthesisUtterance(starMessages[index].replace(/^[✨🌟💫⭐]+ Bintang \d+: /, ''));
-                speech.lang = 'id-ID';
-                speech.rate = 0.95;
-                window.speechSynthesis.speak(speech);
-            }
+            playPopSound(); triggerConfetti();
+            document.getElementById('starMessage').innerText = starMessages[index];
         };
 
-        // Voice Over / Text to Speech Helper
-        window.speakCurrentQuote = () => {
-            const text = document.getElementById('quoteText').innerText;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const speech = new SpeechSynthesisUtterance(text);
-                speech.lang = 'id-ID';
-                speech.rate = 0.95;
-                window.speechSynthesis.speak(speech);
+        const quotes = [
+            "\"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan.\"",
+            "\"Kejujuran pada diri sendiri adalah awal dari ketenangan pikiran.\"",
+            "\"Kamu tidak harus sempurna untuk terus berkembang dan disayangi.\""
+        ];
+        let currentQuoteIndex = 0;
+        setInterval(() => {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            const el = document.getElementById('quoteText');
+            if(el) {
+                el.style.opacity = 0;
+                setTimeout(() => { el.innerText = quotes[currentQuoteIndex]; el.style.opacity = 1; }, 500);
             }
-        };
-        window.speakAnxietyText = () => {
-            const text = "Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup.";
+        }, 8000);
+
+        window.speakCurrentQuote = () => { speakText(document.getElementById('quoteText').innerText); };
+        window.speakAnxietyText = () => { speakText("Tidak apa-apa merasa lelah. Tidak apa-apa jika hari ini terasa berat. Kamu sudah berjuang sejauh ini, dan itu sudah lebih dari cukup."); };
+        const speakText = (text) => {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const speech = new SpeechSynthesisUtterance(text);
-                speech.lang = 'id-ID';
-                speech.rate = 0.95;
-                window.speechSynthesis.speak(speech);
-            }
-        };
-        window.speakVentAdvice = () => {
-            const text = document.getElementById('ventAdviceContent').innerText;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const speech = new SpeechSynthesisUtterance(text);
-                speech.lang = 'id-ID';
-                speech.rate = 0.95;
-                window.speechSynthesis.speak(speech);
+                speech.lang = 'id-ID'; speech.rate = 0.95; window.speechSynthesis.speak(speech);
             }
         };
 
-        // Tab Switching Logic (Journal, Vent, Music)
-        window.switchTab = (tab) => {
-            const journalSec = document.getElementById('journalSection');
-            const ventSec = document.getElementById('ventSection');
-            const musicSec = document.getElementById('musicSection');
-            
-            const journalBtn = document.getElementById('tabJournalBtn');
-            const ventBtn = document.getElementById('tabVentBtn');
-            const musicBtn = document.getElementById('tabMusicBtn');
+        window.openAnxietyReliefModal = () => document.getElementById('anxietyModal').classList.remove('hidden');
+        window.closeAnxietyReliefModal = () => document.getElementById('anxietyModal').classList.add('hidden');
+        window.triggerConfetti = () => confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 }, colors: ['#a855f7', '#ec4899', '#3b82f6', '#ffffff'] });
 
-            journalSec.classList.add('hidden');
-            ventSec.classList.add('hidden');
-            musicSec.classList.add('hidden');
-
-            journalBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
-            ventBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
-            musicBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-gray-400 hover:text-white text-center";
-
-            if(tab === 'journal') {
-                journalSec.classList.remove('hidden');
-                journalBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
-            } else if(tab === 'vent') {
-                ventSec.classList.remove('hidden');
-                ventBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
-            } else if(tab === 'music') {
-                musicSec.classList.remove('hidden');
-                musicBtn.className = "py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-navy-700 shadow text-center";
-            }
-        };
-
-        // Modal Anxiety Relief
-        window.openAnxietyReliefModal = () => {
-            document.getElementById('anxietyModal').classList.remove('hidden');
-        };
-        window.closeAnxietyReliefModal = () => {
-            document.getElementById('anxietyModal').classList.add('hidden');
-        };
-
-        // Logic Kotak Surat Curhat
-        const ventForm = document.getElementById('ventForm');
-        ventForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            playPopSound();
-            const adviceBox = document.getElementById('ventResultBox');
-            const adviceContent = document.getElementById('ventAdviceContent');
-
-            let validationText = "<p><b>Validasi:</b> Amplop suratmu sudah diterima dengan aman. Mengakui bahwa kamu sedang merasa berat adalah langkah awal yang sangat berani. Kamu tidak perlu memikul semuanya sendirian.</p>";
-            let tipsText = "<ul class='list-disc pl-4 space-y-1 mt-2'><li><b>Pecah Tugas Menjadi Kecil:</b> Fokuslah hanya pada 1 hal kecil yang bisa diselesaikan dalam 5 menit ke depan.</li><li><b>Tuliskan Pikiranmu:</b> Menuliskannya di sini sudah mengurangi setengah bebannya.</li><li><b>Istirahatlah Sejenak:</b> Minum air dingin dan istirahatkan matamu dari layar. Kamu sudah bekerja keras.</li></ul>";
-
-            adviceContent.innerHTML = validationText + tipsText;
-            adviceBox.classList.remove('hidden');
-            triggerConfetti();
-        });
-
-        // State untuk Mood
-        let selectedMood = "😊 Bahagia";
-        const moodButtons = document.querySelectorAll('.mood-btn');
-        moodButtons.forEach(btn => {
-            if(btn.dataset.mood === selectedMood) btn.classList.add('active');
+        // 5. Logic Mood Selector
+        let selectedMood = "☁️ Tenang";
+        const moodBtns = document.querySelectorAll('.mood-btn');
+        moodBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 playPopSound();
-                moodButtons.forEach(b => b.classList.remove('active'));
+                moodBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 selectedMood = btn.dataset.mood;
             });
         });
 
-        // Rotasi Quotes
-        const quotes = [
-            "\"Evaluasi kecil hari ini mencegah penyesalan besar di masa depan.\"",
-            "\"Kejujuran pada diri sendiri adalah awal dari ketenangan pikiran.\"",
-            "\"Setiap kesalahan adalah data pembelajaran, bukan kegagalan.\"",
-            "\"Kamu tidak harus sempurna untuk terus berkembang.\""
-        ];
-        let currentQuoteIndex = 0;
-        setInterval(() => {
-            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-            const quoteEl = document.getElementById('quoteText');
-            if(quoteEl) {
-                quoteEl.style.opacity = 0;
-                setTimeout(() => {
-                    quoteEl.innerText = quotes[currentQuoteIndex];
-                    quoteEl.style.opacity = 1;
-                }, 300);
-            }
-        }, 6000);
+        // ==========================================
+        // FIREBASE LOGIC: JURNAL & SURAT CURHAT
+        // ==========================================
 
-        // Confetti
-        const triggerConfetti = () => {
-            confetti({
-                particleCount: 90,
-                spread: 70,
-                origin: { y: 0.7 },
-                colors: ['#4facfe', '#00f2fe', '#ffffff', '#ffd700', '#a18cd1']
-            });
-        };
-
-        // Render kartu jurnal dengan nama pengirim yang dinamis (bisa diisi kamu atau temanmu)
-        const createEntryHTML = (entry, id, animate = false) => {
+        // A. Jurnal Harian
+        const createJournalHTML = (entry, id) => {
             const card = document.createElement('div');
-            card.className = `glass-panel p-6 rounded-2xl border-l-4 border-l-neon-blue transition-all duration-300 relative group ${animate ? 'entry-animate' : ''}`;
-           
-            const author = entry.author || "Zafira Zahra Kusnadi";
-
+            card.className = "glass-panel p-5 rounded-2xl border-l-4 border-l-dream-blue transition-all relative group mb-4";
             card.innerHTML = `
-                <div class="flex flex-wrap justify-between items-center gap-2 mb-4 border-b border-navy-700/60 pb-3">
+                <div class="flex flex-wrap justify-between items-center mb-4 pb-3 border-b border-white/5">
                     <div class="flex items-center gap-2">
-                        <span class="text-base px-2.5 py-1 rounded-lg bg-navy-800 border border-navy-700 font-medium text-white">${entry.mood || '😊 Bahagia'}</span>
-                        <span class="text-[11px] text-gray-400 font-mono">${entry.date}</span>
+                        <span class="text-xs bg-white/10 px-3 py-1 rounded-full">${entry.mood}</span>
+                        <span class="text-[10px] text-gray-400 font-mono">${entry.date}</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-[11px] font-medium text-neon-cyan bg-navy-800/80 px-2.5 py-1 rounded-md border border-navy-700">✍️ ${author}</span>
-                        <button onclick="window.deleteJournal('${id}'); playPopSound();" class="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity text-xs uppercase tracking-wider flex items-center gap-1">
-                            Hapus
-                        </button>
+                    <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                        <span class="text-[10px] font-medium text-dream-glow bg-white/5 px-2.5 py-1 rounded-md">✍️ ${entry.author}</span>
+                        <button onclick="deleteDocById('jurnal_refleksi', '${id}')" class="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase tracking-wider">Hapus</button>
                     </div>
                 </div>
                 <div class="space-y-4 text-sm">
-                    <div>
-                        <span class="text-neon-blue text-[10px] font-bold uppercase tracking-widest block mb-1">Perasaan</span>
-                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.feelings}</p>
-                    </div>
-                    <div>
-                        <span class="text-red-400 text-[10px] font-bold uppercase tracking-widest block mb-1">Evaluasi</span>
-                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.mistakes}</p>
-                    </div>
-                    <div>
-                        <span class="text-neon-cyan text-[10px] font-bold uppercase tracking-widest block mb-1">Pelajaran / Resolusi</span>
-                        <p class="text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${entry.lessons}</p>
-                    </div>
+                    <div><span class="text-dream-blue text-[9px] font-bold uppercase tracking-widest block mb-1">Perasaan</span><p class="text-gray-300 font-light whitespace-pre-wrap">${entry.feelings}</p></div>
+                    <div><span class="text-dream-pink text-[9px] font-bold uppercase tracking-widest block mb-1">Evaluasi</span><p class="text-gray-300 font-light whitespace-pre-wrap">${entry.mistakes}</p></div>
+                    <div><span class="text-dream-purple text-[9px] font-bold uppercase tracking-widest block mb-1">Resolusi</span><p class="text-gray-300 font-light whitespace-pre-wrap">${entry.lessons}</p></div>
                 </div>
             `;
             return card;
         };
 
-        window.deleteJournal = async (id) => {
-            if(confirm("Yakin ingin menghapus catatan refleksi ini?")) {
-                try {
-                    await deleteDoc(doc(db, "jurnal_refleksi", id));
-                } catch (error) {
-                    console.error("Gagal menghapus:", error);
-                }
+        document.getElementById('reflectionForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); playPopSound();
+            const btn = document.getElementById('submitBtn'); btn.innerHTML = "Menyimpan... ⏳"; btn.disabled = true;
+            try {
+                await addDoc(journalsRef, {
+                    author: document.getElementById('authorName').value || "Anonim",
+                    mood: selectedMood, date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
+                    feelings: document.getElementById('feelings').value, mistakes: document.getElementById('mistakes').value,
+                    lessons: document.getElementById('lessons').value, timestamp: Date.now()
+                });
+                ['feelings','mistakes','lessons'].forEach(id => document.getElementById(id).value = '');
+                triggerConfetti(); window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            } catch (err) { alert("Gagal nyimpen!"); } 
+            finally { btn.innerHTML = "Simpan Jurnal ✨"; btn.disabled = false; }
+        });
+
+        // B. Kotak Surat (Kirim & Baca)
+        const createVentHTML = (entry, id) => {
+            const card = document.createElement('div');
+            card.className = "glass-panel-highlight p-5 rounded-2xl transition-all relative group mb-4 border border-dream-pink/30";
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-[10px] text-gray-400 font-mono">${entry.date}</span>
+                    <button onclick="deleteDocById('surat_rahasia', '${id}')" class="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase tracking-wider">Hapus</button>
+                </div>
+                <h4 class="text-xs font-bold text-dream-pink uppercase tracking-widest mb-2">💌 Dari: ${entry.author}</h4>
+                <p class="text-sm text-gray-200 font-light leading-relaxed whitespace-pre-wrap italic">"${entry.message}"</p>
+                <div class="mt-4 pt-3 border-t border-white/5 flex gap-2">
+                    <button onclick="speakText('${entry.message}')" class="text-[10px] bg-white/5 px-3 py-1.5 rounded-lg text-dream-purple hover:bg-white/10 transition-colors flex items-center gap-1">🔊 Bacakan</button>
+                </div>
+            `;
+            return card;
+        };
+
+        document.getElementById('ventForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); playPopSound();
+            const btn = document.getElementById('ventSubmitBtn'); btn.innerHTML = "Menerbangkan... ✈️"; btn.disabled = true;
+            try {
+                await addDoc(ventsRef, {
+                    author: document.getElementById('authorName').value || "Anonim",
+                    message: document.getElementById('ventInput').value,
+                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
+                    timestamp: Date.now()
+                });
+                document.getElementById('ventInput').value = '';
+                document.getElementById('ventSuccess').classList.remove('hidden');
+                triggerConfetti();
+                setTimeout(() => document.getElementById('ventSuccess').classList.add('hidden'), 5000);
+            } catch (err) { alert("Gagal ngirim surat!"); } 
+            finally { btn.innerHTML = "✈️ Terbangkan Surat ke Pasangan"; btn.disabled = false; }
+        });
+
+        // Global Delete Helper
+        window.deleteDocById = async (colName, id) => {
+            if(confirm("Yakin ingin menghapus dokumen ini selamanya?")) {
+                await deleteDoc(doc(db, colName, id)); playPopSound();
             }
         };
 
-        // Realtime Listener
-        const q = query(journalsRef, orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const entriesContainer = document.getElementById('journalEntries');
-            const entryCountEl = document.getElementById('entryCount');
-            const connectionStatus = document.getElementById('connectionStatus');
-
-            entriesContainer.innerHTML = '';
-            entryCountEl.innerText = snapshot.size;
-            connectionStatus.innerText = "Terhubung ke Database Aman";
-
-            if(snapshot.empty) {
-                entriesContainer.innerHTML = '<div class="glass-panel p-8 text-center rounded-xl text-gray-500 italic text-sm">Belum ada catatan refleksi tersimpan. Mulai tulis hari ini!</div>';
-                return;
-            }
-
-            snapshot.forEach((docSnap) => {
-                const entry = docSnap.data();
-                const docId = docSnap.id;
-                const isNew = (Date.now() - entry.timestamp) < 3000;
-                entriesContainer.appendChild(createEntryHTML(entry, docId, isNew));
-            });
-        }, (error) => {
-            document.getElementById('connectionStatus').innerText = "Koneksi Terputus";
+        // C. Listener Real-time
+        // Listener Jurnal
+        onSnapshot(query(journalsRef, orderBy("timestamp", "desc")), (snapshot) => {
+            const container = document.getElementById('journalEntries'); container.innerHTML = '';
+            document.getElementById('entryCount').innerText = snapshot.size;
+            snapshot.forEach(doc => container.appendChild(createJournalHTML(doc.data(), doc.id)));
         });
 
-        // Submit Form Jurnal
-        const form = document.getElementById('reflectionForm');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            playPopSound();
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="relative">Menyimpan...</span>';
-
-            const authorInput = document.getElementById('authorName').value.trim();
-
-            try {
-                await addDoc(journalsRef, {
-                    author: authorInput || "Zafira Zahra Kusnadi",
-                    mood: selectedMood,
-                    date: new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }),
-                    feelings: document.getElementById('feelings').value,
-                    mistakes: document.getElementById('mistakes').value,
-                    lessons: document.getElementById('lessons').value,
-                    timestamp: Date.now()
+        // Listener Surat (Dengan Logic Notifikasi Live)
+        let isInitialLoadVents = true; // Penanda agar data lama pas web pertama dibuka gak nge-trigger notif
+        onSnapshot(query(ventsRef, orderBy("timestamp", "desc")), (snapshot) => {
+            const container = document.getElementById('inboxEntries'); 
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-center text-gray-500 italic text-sm mt-10">Belum ada surat masuk. Hati-hati di jalan ya.</p>';
+            } else {
+                container.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    container.appendChild(createVentHTML(data, docSnap.id));
                 });
-               
-                document.getElementById('feelings').value = '';
-                document.getElementById('mistakes').value = '';
-                document.getElementById('lessons').value = '';
-                moodButtons.forEach(b => b.classList.remove('active'));
-                moodButtons[0].classList.add('active');
-                selectedMood = moodButtons[0].dataset.mood;
-
-                triggerConfetti();
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            } catch (error) {
-                alert("Gagal menyimpan data ke database.");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span><span class="relative">Simpan Jurnal Hari Ini ✨</span>';
             }
+
+            // Logic trigger notifikasi in-app
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added" && !isInitialLoadVents) {
+                    const newSurat = change.doc.data();
+                    const currentLocalUser = document.getElementById('authorName').value;
+                    
+                    // Notif cuma muncul kalau nama pengirim surat BEDA dengan nama yang tertera di form input web kamu
+                    if (newSurat.author !== currentLocalUser) {
+                        showInAppNotif(newSurat.author, newSurat.message);
+                    }
+                }
+            });
+            isInitialLoadVents = false;
         });
     </script>
 </body>
